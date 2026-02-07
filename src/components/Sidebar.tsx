@@ -88,12 +88,14 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
     router.push('/login')
   }
 
+  const isDetailedPath = pathname.startsWith('/learning/') && pathname !== '/learning'
+
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 p-4">
+    <div className={`flex min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 ${isDetailedPath ? 'p-0' : 'p-4'}`}>
       <div
         className={`sticky top-4 flex-shrink-0 rounded-2xl bg-gray-800/40 shadow-2xl transition-all duration-300 ${
           sidebarExpanded ? 'w-48' : 'w-16'
-        }`}
+        } ${isDetailedPath ? 'ml-4' : ''}`}
         style={{ height: 'calc(100vh - 2rem)' }}
         onMouseEnter={() => setSidebarExpanded(true)}
         onMouseLeave={() => setSidebarExpanded(false)}
@@ -129,28 +131,30 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
         </nav>
       </div>
 
-      <div className="ml-4 flex min-h-[calc(100vh-2rem)] flex-1 flex-col">
-        <header className="mb-4 flex h-16 items-center justify-between rounded-2xl border-2 border-blue-500 bg-white px-8 shadow-lg">
-          <h1 className="text-xl font-semibold text-gray-800">
-            {getPageTitle(pathname)}
-          </h1>
+      <div className={`flex min-h-[calc(100vh-2rem)] flex-1 flex-col ${isDetailedPath ? '' : 'ml-4'}`}>
+        {!isDetailedPath && (
+          <header className="mb-4 flex h-16 items-center justify-between rounded-2xl border-2 border-blue-500 bg-white px-8 shadow-lg">
+            <h1 className="text-xl font-semibold text-gray-800">
+              {getPageTitle(pathname)}
+            </h1>
 
-          <div className="flex items-center space-x-6">
-            <span className="hidden rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-sm text-blue-600 sm:block">
-              Welcome, {userName}
-            </span>
+            <div className="flex items-center space-x-6">
+              <span className="hidden rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-sm text-blue-600 sm:block">
+                Welcome, {userName}
+              </span>
 
-            <button
-              onClick={handleLogout}
-              className="rounded-xl border border-red-600 bg-red-500 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-red-600 hover:shadow-lg"
-            >
-              <LogOut className="mr-2 inline h-4 w-4" />
-              Logout
-            </button>
-          </div>
-        </header>
+              <button
+                onClick={handleLogout}
+                className="rounded-xl border border-red-600 bg-red-500 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-red-600 hover:shadow-lg"
+              >
+                <LogOut className="mr-2 inline h-4 w-4" />
+                Logout
+              </button>
+            </div>
+          </header>
+        )}
 
-        <main className="flex-1 overflow-hidden rounded-2xl border-2 border-blue-500 bg-white p-8 shadow-xl">
+        <main className={`flex-1 overflow-hidden ${isDetailedPath ? '' : 'rounded-2xl border-2 border-blue-500 bg-white shadow-xl'}`}>
           <div className="h-full overflow-auto">{children}</div>
         </main>
       </div>

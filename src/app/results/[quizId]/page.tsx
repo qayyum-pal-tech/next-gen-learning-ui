@@ -1,0 +1,7 @@
+import ResultsPage from "@/components/ResultsPage";
+
+export default async function Page({ params }: { params: Promise<{ quizId: string }> }) {
+    return (
+        <ResultsPage params={params} />
+    );
+}
