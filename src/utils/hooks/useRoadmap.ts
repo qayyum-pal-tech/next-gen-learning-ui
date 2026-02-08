@@ -22,15 +22,12 @@ import useSWR from "swr";
 import { useCallback } from "react";
 import { Roadmap } from "@/types/types";
 import { markSubtopicCompleted, markTopicCompleted } from "../apis/roadmapApi";
+import apiClient from "../apiClient";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const fetcher = (url: string) => apiClient.get(url).then((res) => res.data);
 
-/** Build the SWR cache key for a single roadmap. Exported so other hooks can
- *  mutate the same key if needed (e.g. after creating a roadmap). */
 export function roadmapKey(id: string, userId: string): string {
-  return `${BASE_URL}/roadmaps/${encodeURIComponent(
-    id
-  )}?userId=${encodeURIComponent(userId)}`;
+  return `/roadmaps/${id}?userId=${encodeURIComponent(userId)}`;
 }
 
 export function useRoadmap(
@@ -38,8 +35,7 @@ export function useRoadmap(
   userId: string | null | undefined
 ) {
   const key = id && userId ? roadmapKey(id, userId) : null;
-  console.log("key",key);
-  const { data, error, isLoading, mutate } = useSWR<Roadmap>(key);
+  const { data, error, isLoading, mutate } = useSWR<Roadmap>(key, fetcher);
 
   /* ── optimistic helper: clone & patch the local Roadmap object ── */
   const patchLocally = useCallback(

@@ -1,36 +1,18 @@
-"use client";
-
 import { Roadmap } from "@/types/types";
-/**
- * useRoadmaps.ts
- *
- * Fetches every roadmap that belongs to `userId`.
- * Maps to:  GET /roadmaps?userId=:userId
- *
- * Usage:
- *   const { roadmaps, isLoading, error } = useRoadmaps(userId);
- *
- * The hook is automatically paused when `userId` is undefined / null / empty –
- * useful when you're still waiting for an auth context to hydrate.
- */
-
 import useSWR from "swr";
+import apiClient from "../apiClient";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const fetcher = (url: string) => apiClient.get(url).then((res) => res.data);
 
 export function useRoadmaps(userId: string | null | undefined) {
-  // key is null when userId is falsy  →  SWR won't fire
-  const key = userId
-    ? `${BASE_URL}/roadmaps?userId=${encodeURIComponent(userId)}`
-    : null;
+  const key = userId ? `/roadmaps?userId=${encodeURIComponent(userId)}` : null;
 
-  const { data, error, isLoading, mutate } = useSWR<Roadmap[]>(key);
+  const { data, error, isLoading, mutate } = useSWR<Roadmap[]>(key, fetcher);
 
   return {
-    roadmaps: data ?? [], // always an array, never undefined
+    roadmaps: data ?? [],
     isLoading,
-    error, // Error | undefined
-    /** manually re-fetch from the network */
+    error,
     refresh: mutate,
   };
 }

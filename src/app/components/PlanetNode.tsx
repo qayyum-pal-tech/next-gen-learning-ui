@@ -12,6 +12,7 @@ interface PlanetNodeProps {
     onClick: () => void;
     x: number; // percentage (0-100)
     y: number; // absolute pixels from top
+    memberIcons?: { username: string; userId: string }[];
 }
 
 export default function PlanetNode({
@@ -22,6 +23,7 @@ export default function PlanetNode({
     onClick,
     x,
     y,
+    memberIcons = [],
 }: PlanetNodeProps) {
     const completedSubtopics = topic.subtopics.filter((s) => s.isCompleted).length;
     const totalSubtopics = topic.subtopics.length;
@@ -69,6 +71,26 @@ export default function PlanetNode({
                         <Check className="w-8 h-8 text-emerald-400" />
                     ) : (
                         <span className="text-xl font-bold text-white">{index + 1}</span>
+                    )}
+
+                    {/* Team Member Icons */}
+                    {memberIcons.length > 0 && (
+                        <div className="absolute inset-x-0 -top-6 flex justify-center -space-x-2">
+                            {memberIcons.map((member, i) => (
+                                <motion.div
+                                    key={member.userId}
+                                    initial={{ scale: 0, y: 10 }}
+                                    animate={{ scale: 1, y: 0 }}
+                                    className="w-8 h-8 rounded-full border-2 border-gray-900 bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-[10px] font-bold text-white shadow-lg cursor-help group/member"
+                                    title={member.username}
+                                >
+                                    {member.username.charAt(0).toUpperCase()}
+                                    <div className="absolute -bottom-8 bg-black/80 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/member:opacity-100 whitespace-nowrap z-50 pointer-events-none border border-white/20">
+                                        {member.username}
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
                     )}
 
                     {/* Progress Ring (SVG) */}

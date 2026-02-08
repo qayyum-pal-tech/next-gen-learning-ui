@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth.store';
+import { getMe } from '@/app/teams/services/users.service';
 
 const PUBLIC_ROUTES = ['/auth/login', '/auth/register'];
 
@@ -10,11 +11,25 @@ export const useProtectedRoute = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { isAuthenticated, isInitialized, init } = useAuthStore();
+  const { isAuthenticated, isInitialized, user, init, setUser } = useAuthStore();
 
   useEffect(() => {
     init();
   }, []);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (isAuthenticated && !user) {
+        try {
+          const userData = await getMe();
+          setUser(userData);
+        } catch (error) {
+          console.error('Failed to fetch user:', error);
+        }
+      }
+    };
+    fetchUser();
+  }, [isAuthenticated, user, setUser]);
 
   useEffect(() => {
     if (!isInitialized) return;

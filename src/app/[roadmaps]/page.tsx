@@ -5,36 +5,18 @@ import RoadmapCard from "../components/RoadmapCard";
 import { Sparkles, Plus } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { getMe } from "../teams/services/users.service";
 
-// Mock userId for now - in real app would come from auth context
-const USER_ID = "6985d2d810f14cfda7083a7b";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function DashboardPage() {
-    
+    const { user } = useAuthStore();
+    const USER_ID = user?._id || user?.id;
+    console.log("USER_ID", USER_ID);
+
     // console.log("roadmaps",roadmaps);
     const [tick, setTick] = useState(0);
-    const [currentUser, setCurrentUser] = useState<any>(null);
-        const [loading, setLoading] = useState(false);
-    
-        console.log("currentuser",currentUser);
-      
-        useEffect(() => {
-          const load = async () => {
-            try {
-              setLoading(true)
-              const  meRes = await getMe();
-              setCurrentUser(meRes)
-            } catch (err) {
-              console.error(err)
-            } finally {
-              setLoading(false)
-            }
-          }
-          load()
-        }, [])
-        
-   const { roadmaps, isLoading } = useRoadmaps(USER_ID);
+
+    const { roadmaps, isLoading } = useRoadmaps(USER_ID);
     /* star animation tick */
     useEffect(() => {
         const id = setInterval(() => setTick((t) => t + 1), 2000);

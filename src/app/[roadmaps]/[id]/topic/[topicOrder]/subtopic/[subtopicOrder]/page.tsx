@@ -13,11 +13,13 @@ import SubtopicContent from "@/app/components/SubtopicContent";
 import { SubtopicContent as SubtopicContentType } from "@/types/types";
 import { ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 import { Shell } from "@/utils/svgs/Shell";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function SubtopicPage() {
     const params = useParams();
     const router = useRouter();
-
+    const { user } = useAuthStore();
+    const USER_ID = user?._id || user?.id;
     // Parse params
     // app/[roadmaps]/[id]/topic/[topicOrder]/subtopic/[subtopicOrder]
     const roadmapId = params?.id as string;
@@ -25,7 +27,7 @@ export default function SubtopicPage() {
     const subtopicOrder = parseInt(params?.subtopicOrder as string);
 
     // 1. Fetch Basic Roadmap Data (for titles/context)
-    const { roadmap, isLoading: isRoadmapLoading, markSubtopicDone } = useRoadmap(roadmapId, "001"); // TODO: actual userId
+    const { roadmap, isLoading: isRoadmapLoading, markSubtopicDone } = useRoadmap(roadmapId, USER_ID); // TODO: actual userId
 
     // State
     const [content, setContent] = useState<SubtopicContentType | null>(null);

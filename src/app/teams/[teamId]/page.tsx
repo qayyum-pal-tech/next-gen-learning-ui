@@ -12,6 +12,8 @@ import { useParams, useRouter } from 'next/navigation';
 import EditTeamModal from '../components/EditTeamModal';
 import UserMultiSelectDropdown from '../components/UserMultiSelectDropdown';
 import { getMe } from '../services/users.service';
+import TeamSharedRoadmaps from '../components/TeamSharedRoadmaps';
+import TeamRoadmapProgress from '../components/TeamRoadmapProgress';
 
 export default function TeamDetailsPage() {
   const { teamId } = useParams();
@@ -23,6 +25,8 @@ export default function TeamDetailsPage() {
   const [adding, setAdding] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'details' | 'roadmaps'>('details');
+  const [selectedRoadmapId, setSelectedRoadmapId] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -144,163 +148,207 @@ export default function TeamDetailsPage() {
           </div>
         </div>
 
-        {/* Add Member Section */}
-        {isCreator && (
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-2xl p-6 sm:p-8 shadow-xl">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-700 to-cyan-600 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-white">Add Team Members</h2>
-            </div>
+        {/* Tabs */}
+        <div className="flex border-b border-gray-700 mb-8">
+          <button
+            onClick={() => {
+              setActiveTab('details');
+              setSelectedRoadmapId(null);
+            }}
+            className={`px-8 py-4 font-bold transition-all duration-300 border-b-2 ${activeTab === 'details'
+                ? 'text-blue-400 border-blue-400 bg-blue-400/5'
+                : 'text-gray-500 border-transparent hover:text-gray-300'
+              }`}
+          >
+            Team Details
+          </button>
+          <button
+            onClick={() => setActiveTab('roadmaps')}
+            className={`px-8 py-4 font-bold transition-all duration-300 border-b-2 ${activeTab === 'roadmaps'
+                ? 'text-blue-400 border-blue-400 bg-blue-400/5'
+                : 'text-gray-500 border-transparent hover:text-gray-300'
+              }`}
+          >
+            Roadmaps
+          </button>
+        </div>
 
-            <div className="space-y-6">
-              <UserMultiSelectDropdown
-                teamId={team._id}
-                selectedUsers={selectedUsers}
-                onChange={setSelectedUsers}
-              />
-
-              <button
-                disabled={selectedUsers.length === 0 || adding}
-                onClick={async () => {
-                  try {
-                    setAdding(true);
-                    await addMembers(
-                      team._id,
-                      selectedUsers.map((u) => u._id),
-                    );
-
-                    setSelectedUsers([]);
-                    fetchTeam();
-                  } finally {
-                    setAdding(false);
-                  }
-                }}
-                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2"
-              >
-                {adding ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Adding Members...
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        {activeTab === 'details' ? (
+          <div className="space-y-8">
+            {/* Add Member Section */}
+            {isCreator && (
+              <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-2xl p-6 sm:p-8 shadow-xl">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-700 to-cyan-600 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
                     </svg>
-                    Add {selectedUsers.length} Member{selectedUsers.length !== 1 ? 's' : ''}
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Members List */}
-        <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-2xl p-6 sm:p-8 shadow-xl">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-cyan-700 to-blue-600 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13 0A5.981 5.981 0 0018 8a4 4 0 10-8 0 5.981 5.981 0 00-3.064 4.197m13 0a5.975 5.975 0 013.064-4.197A5.981 5.981 0 0020 8a5.981 5.981 0 00-8 0 5.975 5.975 0 013.064 4.197"></path>
-                </svg>
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-white">Team Members</h2>
-                <p className="text-gray-400">{team.members.length} members in total</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            {team.members.map((m: any, index: number) => (
-              <div
-                key={m._id}
-                className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 border border-gray-700 rounded-xl p-5 hover:border-blue-500/50 transition-all duration-300 group"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="relative">
-                      <div className="w-12 h-12 bg-gradient-to-br from-blue-800 to-cyan-700 rounded-xl flex items-center justify-center">
-                        <span className="text-white font-bold text-lg">
-                          {m.username.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                      {m._id === createdById && (
-                        <div className="absolute -top-1 -right-1 bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-xs px-2 py-1 rounded-full">
-                          Owner
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-3">
-                        <h3 className="font-bold text-white text-lg">{m.username}</h3>
-                        {m._id === currentUser._id && (
-                          <span className="text-xs bg-blue-900/30 text-blue-300 px-2 py-1 rounded-full">
-                            You
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-gray-400">{m.email}</p>
-                    </div>
                   </div>
+                  <h2 className="text-2xl font-bold text-white">Add Team Members</h2>
+                </div>
 
-                  {isCreator && m._id !== createdById && (
-                    <button
-                      onClick={() => removeMember(team._id, m._id).then(fetchTeam)}
-                      className="px-4 py-2 bg-gradient-to-r from-red-900/30 to-red-800/30 text-red-400 hover:text-red-300 border border-red-800/50 hover:border-red-700 rounded-lg transition-all duration-300 flex items-center gap-2 opacity-0 group-hover:opacity-100"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                      </svg>
-                      Remove
-                    </button>
-                  )}
+                <div className="space-y-6">
+                  <UserMultiSelectDropdown
+                    teamId={team._id}
+                    selectedUsers={selectedUsers}
+                    onChange={setSelectedUsers}
+                  />
+
+                  <button
+                    disabled={selectedUsers.length === 0 || adding}
+                    onClick={async () => {
+                      try {
+                        setAdding(true);
+                        await addMembers(
+                          team._id,
+                          selectedUsers.map((u) => u._id),
+                        );
+
+                        setSelectedUsers([]);
+                        fetchTeam();
+                      } finally {
+                        setAdding(false);
+                      }
+                    }}
+                    className="px-8 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2"
+                  >
+                    {adding ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Adding Members...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        Add {selectedUsers.length} Member{selectedUsers.length !== 1 ? 's' : ''}
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
+            )}
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row justify-end gap-4 pt-4">
-          {!isCreator && (
-            <button
-              onClick={async () => {
-                if (confirm('Are you sure you want to exit this team?')) {
-                  await exitTeam(team._id);
-                  router.replace('/teams');
-                }
-              }}
-              className="px-8 py-3 bg-gradient-to-r from-yellow-700 to-amber-700 hover:from-yellow-600 hover:to-amber-600 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-              </svg>
-              Exit Team
-            </button>
-          )}
-          
-          {isCreator && (
-            <button
-              onClick={async () => {
-                if (confirm('Are you sure you want to delete this team? This action cannot be undone.')) {
-                  await deleteTeam(team._id);
-                  router.replace('/teams');
-                }
-              }}
-              className="px-8 py-3 bg-gradient-to-r from-red-700 to-pink-700 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-              </svg>
-              Delete Team
-            </button>
-          )}
-        </div>
+            {/* Members List */}
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-2xl p-6 sm:p-8 shadow-xl">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-cyan-700 to-blue-600 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13 0A5.981 5.981 0 0018 8a4 4 0 10-8 0 5.981 5.981 0 00-3.064 4.197m13 0a5.975 5.975 0 013.064-4.197A5.981 5.981 0 0020 8a5.981 5.981 0 00-8 0 5.975 5.975 0 013.064 4.197"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Team Members</h2>
+                    <p className="text-gray-400">{team.members.length} members in total</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {team.members.map((m: any, index: number) => (
+                  <div
+                    key={m._id}
+                    className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 border border-gray-700 rounded-xl p-5 hover:border-blue-500/50 transition-all duration-300 group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="relative">
+                          <div className="w-12 h-12 bg-gradient-to-br from-blue-800 to-cyan-700 rounded-xl flex items-center justify-center">
+                            <span className="text-white font-bold text-lg">
+                              {m.username.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          {m._id === createdById && (
+                            <div className="absolute -top-1 -right-1 bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-xs px-2 py-1 rounded-full">
+                              Owner
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-3">
+                            <h3 className="font-bold text-white text-lg">{m.username}</h3>
+                            {currentUser && m._id === currentUser._id && (
+                              <span className="text-xs bg-blue-900/30 text-blue-300 px-2 py-1 rounded-full">
+                                You
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-gray-400">{m.email}</p>
+                        </div>
+                      </div>
+
+                      {isCreator && m._id !== createdById && (
+                        <button
+                          onClick={() => removeMember(team._id, m._id).then(fetchTeam)}
+                          className="px-4 py-2 bg-gradient-to-r from-red-900/30 to-red-800/30 text-red-400 hover:text-red-300 border border-red-800/50 hover:border-red-700 rounded-lg transition-all duration-300 flex items-center gap-2 opacity-0 group-hover:opacity-100"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                          </svg>
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row justify-end gap-4 pt-4">
+              {!isCreator && (
+                <button
+                  onClick={async () => {
+                    if (confirm('Are you sure you want to exit this team?')) {
+                      await exitTeam(team._id);
+                      router.replace('/teams');
+                    }
+                  }}
+                  className="px-8 py-3 bg-gradient-to-r from-yellow-700 to-amber-700 hover:from-yellow-600 hover:to-amber-600 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                  </svg>
+                  Exit Team
+                </button>
+              )}
+
+              {isCreator && (
+                <button
+                  onClick={async () => {
+                    if (confirm('Are you sure you want to delete this team? This action cannot be undone.')) {
+                      await deleteTeam(team._id);
+                      router.replace('/teams');
+                    }
+                  }}
+                  className="px-8 py-3 bg-gradient-to-r from-red-700 to-pink-700 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                  Delete Team
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="pt-4">
+            {selectedRoadmapId ? (
+              <TeamRoadmapProgress
+                teamId={team._id}
+                roadmapId={selectedRoadmapId}
+                onBack={() => setSelectedRoadmapId(null)}
+              />
+            ) : (
+              <TeamSharedRoadmaps
+                teamId={team._id}
+                onSelect={(id) => setSelectedRoadmapId(id)}
+              />
+            )}
+          </div>
+        )}
       </div>
 
       {showEdit && (

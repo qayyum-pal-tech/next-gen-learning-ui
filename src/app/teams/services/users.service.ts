@@ -1,23 +1,6 @@
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-const api = axios.create({
-  baseURL: API_URL,
-});
-
-api.interceptors.request.use((config) => {
-  // ✅ SSR safety check
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-  }
-  return config;
-});
+import apiClient from "@/utils/apiClient";
 
 export const getMe = async () => {
-  const res = await api.get('/users/me');
+  const res = await apiClient.get('/users/me');
   return res.data;
 };

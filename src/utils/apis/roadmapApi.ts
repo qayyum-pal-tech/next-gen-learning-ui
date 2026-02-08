@@ -1,46 +1,12 @@
-/**
- * roadmapApi.ts
- *
- * Thin, framework-agnostic wrappers around every endpoint exposed by
- * RoadmapController.  All functions throw on non-2xx so callers (SWR hooks,
- * tests, etc.) can catch uniformly.
- *
- * BASE_URL – set this to wherever your NestJS server lives.
- *   • In development  → "http://localhost:3000"
- *   • In production   → pulled from an env var via Next.js or your bundler
- *
- * Adjust the constant below (or replace with process.env / env config) to
- * match your setup.
- */
-
 import { Roadmap } from "@/types/types";
-
-/* ─── config ─── */
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-/* ─── shared helpers ─── */
-
-/** Throw a readable error when the server returns non-2xx. */
-async function assertOk(res: Response): Promise<void> {
-  if (!res.ok) {
-    let message = `HTTP ${res.status}`;
-    try {
-      const body = await res.text();
-      if (body) message += ` – ${body}`;
-    } catch {
-      // ignore parse failure
-    }
-    throw new Error(message);
-  }
-}
+import apiClient from "../apiClient";
 
 /* ─── GET /roadmaps?userId=:userId ─── */
 export async function fetchRoadmaps(userId: string): Promise<Roadmap[]> {
-  const res = await fetch(
-    `${BASE_URL}/roadmaps?userId=${encodeURIComponent(userId)}`
-  );
-  await assertOk(res);
-  return res.json();
+  const res = await apiClient.get<Roadmap[]>(`/roadmaps`, {
+    params: { userId },
+  });
+  return res.data;
 }
 
 /* ─── GET /roadmaps/:id?userId=:userId ─── */
@@ -48,13 +14,10 @@ export async function fetchRoadmap(
   id: string,
   userId: string
 ): Promise<Roadmap> {
-  const res = await fetch(
-    `${BASE_URL}/roadmaps/${encodeURIComponent(id)}?userId=${encodeURIComponent(
-      userId
-    )}`
-  );
-  await assertOk(res);
-  return res.json();
+  const res = await apiClient.get<Roadmap>(`/roadmaps/${id}`, {
+    params: { userId },
+  });
+  return res.data;
 }
 
 /* ─── PATCH /roadmaps/:id/topics/:topicOrder?userId=:userId ─── */
@@ -64,18 +27,12 @@ export async function markTopicCompleted(
   topicOrder: number,
   completed: boolean
 ): Promise<Roadmap> {
-  const res = await fetch(
-    `${BASE_URL}/roadmaps/${encodeURIComponent(
-      id
-    )}/topics/${topicOrder}?userId=${encodeURIComponent(userId)}`,
-    {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ topicCompleted: completed }),
-    }
+  const res = await apiClient.patch<Roadmap>(
+    `/roadmaps/${id}/topics/${topicOrder}`,
+    { topicCompleted: completed },
+    { params: { userId } }
   );
-  await assertOk(res);
-  return res.json();
+  return res.data;
 }
 
 /* ─── PATCH /roadmaps/:id/topics/:topicOrder/subtopics/:subtopicOrder?userId=:userId ─── */
@@ -87,21 +44,30 @@ export async function markSubtopicCompleted(
   completed: boolean,
   notes?: string
 ): Promise<Roadmap> {
-  const res = await fetch(
-    `${BASE_URL}/roadmaps/${encodeURIComponent(
-      id
-    )}/topics/${topicOrder}/subtopics/${subtopicOrder}?userId=${encodeURIComponent(
-      userId
-    )}`,
+  const res = await apiClient.patch<Roadmap>(
+    `/roadmaps/${id}/topics/${topicOrder}/subtopics/${subtopicOrder}`,
     {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        subtopicCompleted: completed,
-        ...(notes !== undefined && { notes }),
-      }),
-    }
+      subtopicCompleted: completed,
+      ...(notes !== undefined && { notes }),
+    },
+    { params: { userId } }
   );
-  await assertOk(res);
-  return res.json();
+  return res.data;
+}
+
+/* ─── GET /roadmaps/team/:teamId ─── */
+export async function fetchTeamRoadmaps(teamId: string): Promise<any[]> {
+  const res = await apiClient.get<any[]>(`/roadmaps/team/${teamId}`);
+  return res.data;
+}
+
+/* ─── GET /roadmaps/team/:teamId/roadmap/:roadmapId/progress ─── */
+export async function fetchTeamRoadmapProgress(
+  teamId: string,
+  roadmapId: string
+): Promise<{ roadmap: Roadmap; membersProgress: any[] }> {
+  const res = await apiClient.get<{ roadmap: Roadmap; membersProgress: any[] }>(
+    `/roadmaps/team/${teamId}/roadmap/${roadmapId}/progress`
+  );
+  return res.data;
 }

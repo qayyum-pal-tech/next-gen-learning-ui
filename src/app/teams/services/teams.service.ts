@@ -1,18 +1,4 @@
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-const api = axios.create({
-  baseURL: API_URL,
-});
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+import apiClient from "@/utils/apiClient";
 
 /* -------- CREATE -------- */
 export const createTeam = async (data: {
@@ -20,51 +6,51 @@ export const createTeam = async (data: {
   description?: string;
   members?: string[];
 }) => {
-  const res = await api.post('/teams', data);
+  const res = await apiClient.post('/teams', data);
   return res.data;
 };
 
 /* -------- READ -------- */
 export const getCreatedTeams = async () => {
-  const res = await api.get('/teams/created');
-  return res.data; // ✅ array
+  const res = await apiClient.get('/teams/created');
+  return res.data;
 };
 
 export const getJoinedTeams = async () => {
-  const res = await api.get('/teams/joined');
-  return res.data; // ✅ array
+  const res = await apiClient.get('/teams/joined');
+  return res.data;
 };
 
 export const getTeamById = async (teamId: string) => {
-  const res = await api.get(`/teams/${teamId}`);
+  const res = await apiClient.get(`/teams/${teamId}`);
   return res.data;
 };
 
 /* -------- UPDATE -------- */
 export const updateTeam = async (teamId: string, data: any) => {
-  const res = await api.patch(`/teams/${teamId}`, data);
+  const res = await apiClient.patch(`/teams/${teamId}`, data);
   return res.data;
 };
 
 /* -------- MEMBERS -------- */
 export const addMembers = async (teamId: string, members: string[]) => {
-  const res = await api.post(`/teams/${teamId}/members`, { members });
+  const res = await apiClient.post(`/teams/${teamId}/members`, { members });
   return res.data;
 };
 
 export const removeMember = async (teamId: string, memberId: string) => {
-  const res = await api.delete(`/teams/${teamId}/members/${memberId}`);
+  const res = await apiClient.delete(`/teams/${teamId}/members/${memberId}`);
   return res.data;
 };
 
 export const exitTeam = async (teamId: string) => {
-  const res = await api.post(`/teams/${teamId}/exit`);
+  const res = await apiClient.post(`/teams/${teamId}/exit`);
   return res.data;
 };
 
 /* -------- DELETE -------- */
 export const deleteTeam = async (teamId: string) => {
-  const res = await api.delete(`/teams/${teamId}`);
+  const res = await apiClient.delete(`/teams/${teamId}`);
   return res.data;
 };
 
@@ -73,11 +59,11 @@ export const getAvailableUsers = async (
   teamId: string,
   search = '',
 ) => {
-  const res = await api.get(
+  const res = await apiClient.get(
     `/teams/${teamId}/available-users`,
     { params: { search } },
   );
-  return res.data; // array of users
+  return res.data;
 };
 
 
@@ -88,13 +74,13 @@ export const shareRoadmap = async (payload: {
   userIds?: string[];
   sharedBy?: string;
 }) => {
-  const res = await api.post('/roadmaps/share', payload);
+  const res = await apiClient.post('/roadmaps/share', payload);
   return res.data;
 };
 
 
 export const searchUsers = async (query: string) => {
-  const res = await api.get('/users/search', {
+  const res = await apiClient.get('/users/search', {
     params: { q: query },
   });
   return res.data;
