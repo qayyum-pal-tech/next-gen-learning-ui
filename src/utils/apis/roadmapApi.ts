@@ -82,3 +82,45 @@ export async function fetchTeamRoadmapProgress(
   );
   return res.data;
 }
+
+/* ─── POST /learning-logs ─── */
+export async function postLearningLog(data: {
+  roadmapId: string;
+  topicTitle: string;
+  minutesSpent: number;
+  trackedMinutes: number;
+  notes?: string;
+}): Promise<any> {
+  const res = await apiClient.post('/learning-logs', data);
+  return res.data;
+}
+
+/* ─── GET /admin/stats ─── */
+export async function fetchAdminStats(): Promise<{
+  userCount: number;
+  roadmapCount: number;
+  totalLearningMinutes: number;
+  averageProgress: number;
+}> {
+  const res = await apiClient.get('/admin/stats');
+  return res.data;
+}
+
+/* ─── GET /admin/logs ─── */
+export async function fetchAdminLogs(): Promise<any[]> {
+  const res = await apiClient.get('/admin/logs');
+  return res.data;
+}
+
+/* ─── PATCH /roadmaps/:id/acceptance ─── */
+export async function updateRoadmapStatus(
+  id: string,
+  userId: string,
+  status: 'accepted' | 'denied'
+): Promise<any> {
+  const res = await apiClient.patch(`/roadmaps/${id}/acceptance`,
+    { status },
+    { params: { userId } }
+  );
+  return res.data;
+}

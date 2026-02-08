@@ -38,6 +38,9 @@ export interface Roadmap {
   difficultyLevel?: string;
   totalEstimatedDuration?: string;
   progressPercentage: number;
+  acceptanceStatus?: 'pending' | 'accepted' | 'denied';
+  sharedBy?: string;
+  teamId?: string;
   aiGeneratedMetadata?: AiGeneratedMetadata;
   createdAt?: string;
   updatedAt?: string;

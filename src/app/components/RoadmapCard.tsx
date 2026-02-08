@@ -19,6 +19,7 @@ import { useMyTeams } from '../teams/services/teampathservice'
 import { shareRoadmap } from '../teams/services/teams.service'
 import UserSearchMultiSelect from './UserSearchMultiSelect'
 import { getMe } from '../teams/services/users.service'
+import { updateRoadmapStatus } from '@/utils/apis/roadmapApi'
 
 interface RoadmapCardProps {
   roadmap: Roadmap
@@ -37,24 +38,24 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
   const { teams } = useMyTeams();
 
   const [currentUser, setCurrentUser] = useState<any>(null);
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    console.log("currentuser",currentUser);
-  
-    useEffect(() => {
-      const load = async () => {
-        try {
-          setLoading(true)
-          const  meRes = await getMe();
-          setCurrentUser(meRes)
-        } catch (err) {
-          console.error(err)
-        } finally {
-          setLoading(false)
-        }
+  console.log("currentuser", currentUser);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true)
+        const meRes = await getMe();
+        setCurrentUser(meRes)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
       }
-      load()
-    }, [])
+    }
+    load()
+  }, [])
 
   console.log('teams', teams)
 
@@ -63,15 +64,26 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
     setShowMenu(!showMenu)
   }
 
-  const handleMenuAction = (e: React.MouseEvent, action: string) => {
+  const handleMenuAction = async (e: React.MouseEvent, action: string) => {
     e.stopPropagation()
     setShowMenu(false)
 
     if (action === 'share') {
       setShowShareModal(true)
     } else if (action === 'accept') {
-      console.log('Accept clicked for roadmap:', roadmap.id)
-      // Add your accept logic here
+      try {
+        await updateRoadmapStatus(roadmap.id!, currentUser._id, 'accepted');
+        window.location.reload();
+      } catch (err) {
+        console.error('Failed to accept:', err);
+      }
+    } else if (action === 'deny') {
+      try {
+        await updateRoadmapStatus(roadmap.id!, currentUser._id, 'denied');
+        window.location.reload();
+      } catch (err) {
+        console.error('Failed to deny:', err);
+      }
     }
   }
 
@@ -79,28 +91,36 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
     e.stopPropagation()
   }
 
- const closeModal = (e?: React.MouseEvent) => {
-  e?.stopPropagation()
+  const closeModal = (e?: React.MouseEvent) => {
+    e?.stopPropagation()
 
-  setShowShareModal(false)
-  setShowMenu(false)
+    setShowShareModal(false)
+    setShowMenu(false)
 
-  // reset modal state
-  setActiveTab('team')
-  setSelectedTeamId(null)
-  setSelectedUsers([])
-  setSharing(false)
-}
+    // reset modal state
+    setActiveTab('team')
+    setSelectedTeamId(null)
+    setSelectedUsers([])
+    setSharing(false)
+  }
 
+
+  const isShared = !!roadmap.sharedBy;
+  const isSharedWithTeam = !!roadmap.teamId;
+  const isPending = roadmap.acceptanceStatus === 'pending' && isSharedWithTeam;
+  const isDenied = roadmap.acceptanceStatus === 'denied' && isSharedWithTeam;
+  const isAccepted = roadmap.acceptanceStatus === 'accepted';
+  const isOwned = !isShared;
 
   return (
     <>
       <div
         onClick={() => {
-          if (showShareModal) return
+          if (showShareModal || isPending || isDenied) return
           router.push(`/roadmap/${roadmap.id}`)
         }}
-        className="group relative h-[400px] max-h-[500px] w-[300px] flex-shrink-0 cursor-pointer"
+        className={`group relative h-[400px] max-h-[500px] w-[300px] flex-shrink-0 ${isPending || isDenied ? 'cursor-not-allowed grayscale-[0.8] opacity-80' : 'cursor-pointer'
+          }`}
       >
         <div className="absolute inset-0 overflow-visible rounded-3xl border border-white/10 bg-[#050510]/80 backdrop-blur-xl transition-all duration-500 group-hover:border-cyan-500/50 group-hover:shadow-[0_0_50px_rgba(6,182,212,0.15)]">
           {/* Card Background Gradient */}
@@ -109,49 +129,77 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
           {/* Status Badge - Center */}
           <div className="absolute top-4 left-1/2 z-10 -translate-x-1/2">
             <div
-              className={`rounded-full border px-3 py-1 text-xs font-bold whitespace-nowrap ${
-                roadmap.status === 'completed'
-                  ? 'border-green-500/20 bg-green-500/10 text-green-400'
-                  : roadmap.status === 'in_progress'
-                    ? 'border-cyan-500/20 bg-cyan-500/10 text-cyan-400'
-                    : 'border-white/10 bg-white/5 text-gray-400'
-              }`}
+              className={`rounded-full border px-3 py-1 text-[10px] font-bold whitespace-nowrap tracking-wider ${isDenied
+                ? 'border-red-500/20 bg-red-500/10 text-red-500'
+                : isPending
+                  ? 'border-amber-500/20 bg-amber-500/10 text-amber-500'
+                  : roadmap.status === 'completed'
+                    ? 'border-green-500/20 bg-green-500/10 text-green-400'
+                    : roadmap.status === 'in_progress'
+                      ? 'border-cyan-500/20 bg-cyan-500/10 text-cyan-400'
+                      : 'border-white/10 bg-white/5 text-gray-400'
+                }`}
             >
-              {roadmap.status === 'completed'
-                ? 'COMPLETED'
-                : roadmap.status === 'in_progress'
-                  ? 'IN PROGRESS'
-                  : 'NOT STARTED'}
+              {isDenied
+                ? 'DENIED'
+                : isPending
+                  ? 'PENDING'
+                  : roadmap.status === 'completed'
+                    ? 'COMPLETED'
+                    : roadmap.status === 'in_progress'
+                      ? 'IN PROGRESS'
+                      : 'NOT STARTED'}
             </div>
           </div>
 
           {/* Kebab Menu Button - Right */}
-          <div className="absolute top-4 right-4 z-20">
-            <button
-              onClick={handleMenuClick}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-all hover:border-white/20 hover:bg-white/10"
-            >
-              <MoreVertical className="h-4 w-4 cursor-pointer text-gray-400 hover:text-white" />
-            </button>
+          {(!isShared || isSharedWithTeam) && (
+            <div className="absolute top-4 right-4 z-20">
+              <button
+                onClick={handleMenuClick}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-all hover:border-white/20 hover:bg-white/10"
+              >
+                <MoreVertical className="h-4 w-4 cursor-pointer text-gray-400 hover:text-white" />
+              </button>
 
-            {/* Dropdown Menu */}
-            {showMenu && (
-              <div className="absolute top-10 right-0 w-40 overflow-hidden rounded-lg border border-white/10 bg-[#0a0a1a]/95 shadow-xl backdrop-blur-xl">
-                <button
-                  onClick={(e) => handleMenuAction(e, 'share')}
-                  className="w-full cursor-pointer px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/5 hover:text-white"
-                >
-                  Share
-                </button>
-                <button
-                  onClick={(e) => handleMenuAction(e, 'accept')}
-                  className="w-full cursor-pointer border-t border-white/5 px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/5 hover:text-white"
-                >
-                  Accept
-                </button>
-              </div>
-            )}
-          </div>
+              {/* Dropdown Menu */}
+              {showMenu && (
+                <div className="absolute top-10 right-0 w-40 overflow-hidden rounded-lg border border-white/10 bg-[#0a0a1a]/95 shadow-xl backdrop-blur-xl">
+                  {(isOwned || (isSharedWithTeam && isAccepted)) && (
+                    <button
+                      onClick={(e) => handleMenuAction(e, 'share')}
+                      className="w-full cursor-pointer px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/5 hover:text-white"
+                    >
+                      Share
+                    </button>
+                  )}
+
+                  {isSharedWithTeam && isPending && (
+                    <>
+                      <button
+                        onClick={(e) => handleMenuAction(e, 'accept')}
+                        className="w-full cursor-pointer px-4 py-2.5 text-left text-sm text-emerald-400 transition-colors hover:bg-emerald-500/10"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={(e) => handleMenuAction(e, 'deny')}
+                        className="w-full cursor-pointer border-t border-white/5 px-4 py-2.5 text-left text-sm text-red-400 transition-colors hover:bg-red-500/10"
+                      >
+                        Deny
+                      </button>
+                    </>
+                  )}
+
+                  {isSharedWithTeam && (isAccepted || isDenied) && (
+                    <div className="px-4 py-2.5 text-xs text-gray-500 italic">
+                      Already {roadmap.acceptanceStatus}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="relative z-10 flex h-full flex-col p-6">
             {/* Icon/Image Placeholder */}
@@ -231,11 +279,10 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
             <div className="flex border-b border-white/10">
               <button
                 onClick={() => setActiveTab('team')}
-                className={`relative flex-1 cursor-pointer px-6 py-4 text-sm font-medium transition-all ${
-                  activeTab === 'team'
-                    ? 'text-cyan-400'
-                    : 'text-gray-400 hover:text-gray-300'
-                }`}
+                className={`relative flex-1 cursor-pointer px-6 py-4 text-sm font-medium transition-all ${activeTab === 'team'
+                  ? 'text-cyan-400'
+                  : 'text-gray-400 hover:text-gray-300'
+                  }`}
               >
                 <div className="flex items-center justify-center gap-2">
                   <Users className="h-4 w-4" />
@@ -247,11 +294,10 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
               </button>
               <button
                 onClick={() => setActiveTab('friends')}
-                className={`relative flex-1 cursor-pointer px-6 py-4 text-sm font-medium transition-all ${
-                  activeTab === 'friends'
-                    ? 'text-cyan-400'
-                    : 'text-gray-400 hover:text-gray-300'
-                }`}
+                className={`relative flex-1 cursor-pointer px-6 py-4 text-sm font-medium transition-all ${activeTab === 'friends'
+                  ? 'text-cyan-400'
+                  : 'text-gray-400 hover:text-gray-300'
+                  }`}
               >
                 <div className="flex items-center justify-center gap-2">
                   <UserPlus className="h-4 w-4" />

@@ -13,6 +13,7 @@ interface PlanetNodeProps {
     x: number; // percentage (0-100)
     y: number; // absolute pixels from top
     memberIcons?: { username: string; userId: string }[];
+    hideProgress?: boolean;
 }
 
 export default function PlanetNode({
@@ -24,6 +25,7 @@ export default function PlanetNode({
     x,
     y,
     memberIcons = [],
+    hideProgress = false,
 }: PlanetNodeProps) {
     const completedSubtopics = topic.subtopics.filter((s) => s.isCompleted).length;
     const totalSubtopics = topic.subtopics.length;
@@ -31,7 +33,8 @@ export default function PlanetNode({
 
     // Visual params
     const size = isSelected ? 90 : 80;
-    const glowColor = topic.isCompleted ? "#10b981" : isSelected ? "#a855f7" : "#06b6d4";
+    const isTopicCompleted = !hideProgress && topic.isCompleted;
+    const glowColor = isTopicCompleted ? "#10b981" : isSelected ? "#a855f7" : "#06b6d4";
 
     return (
         <motion.div
@@ -60,14 +63,14 @@ export default function PlanetNode({
                         width: size,
                         height: size,
                         borderColor: isLocked ? "#374151" : glowColor,
-                        boxShadow: isSelected || topic.isCompleted ? `0 0 20px ${glowColor}40` : "none"
+                        boxShadow: isSelected || isTopicCompleted ? `0 0 20px ${glowColor}40` : "none"
                     }}
                     whileHover={{ scale: 1.1 }}
                 >
                     {/* Inner Content */}
                     {isLocked ? (
                         <Lock className="w-6 h-6 text-gray-500" />
-                    ) : topic.isCompleted ? (
+                    ) : isTopicCompleted ? (
                         <Check className="w-8 h-8 text-emerald-400" />
                     ) : (
                         <span className="text-xl font-bold text-white">{index + 1}</span>
@@ -78,7 +81,7 @@ export default function PlanetNode({
                         <div className="absolute inset-x-0 -top-6 flex justify-center -space-x-2">
                             {memberIcons.map((member, i) => (
                                 <motion.div
-                                    key={member.userId}
+                                    key={`${member.userId}-${i}`}
                                     initial={{ scale: 0, y: 10 }}
                                     animate={{ scale: 1, y: 0 }}
                                     className="w-8 h-8 rounded-full border-2 border-gray-900 bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-[10px] font-bold text-white shadow-lg cursor-help group/member"
@@ -94,7 +97,7 @@ export default function PlanetNode({
                     )}
 
                     {/* Progress Ring (SVG) */}
-                    {!isLocked && !topic.isCompleted && (
+                    {!isLocked && !isTopicCompleted && !hideProgress && (
                         <svg className="absolute inset-0 -rotate-90 w-full h-full p-1">
                             <circle
                                 cx="50%" cy="50%" r="46%"
@@ -123,8 +126,8 @@ export default function PlanetNode({
                 `}
                     transition={{ duration: 0.2 }}
                 >
-                    <h3 className={`text-sm font-bold mb-1 ${isLocked ? "text-gray-500" : "text-white"}`}>{topic.title}</h3>
-                    <p className="text-xs text-gray-400">{completedSubtopics}/{totalSubtopics} Modules</p>
+                    <h3 className={`text-sm font-bold ${isLocked ? "text-gray-500" : "text-white"} ${hideProgress ? "" : "mb-1"}`}>{topic.title}</h3>
+                    {!hideProgress && <p className="text-xs text-gray-400">{completedSubtopics}/{totalSubtopics} Modules</p>}
                 </motion.div>
             </div>
         </motion.div>

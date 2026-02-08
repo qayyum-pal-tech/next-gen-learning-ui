@@ -11,9 +11,10 @@ import {
 } from "@/utils/apis/contentApi";
 import SubtopicContent from "@/app/components/SubtopicContent";
 import { SubtopicContent as SubtopicContentType } from "@/types/types";
-import { ArrowLeft, Loader2, AlertCircle } from "lucide-react";
+import { ArrowLeft, Loader2, AlertCircle, Clock } from "lucide-react";
 import { Shell } from "@/utils/svgs/Shell";
 import { useAuthStore } from "@/store/auth.store";
+import LearningLogModal from "@/app/components/LearningLogModal";
 
 export default function SubtopicPage() {
     const params = useParams();
@@ -27,7 +28,7 @@ export default function SubtopicPage() {
     const subtopicOrder = parseInt(params?.subtopicOrder as string);
 
     // 1. Fetch Basic Roadmap Data (for titles/context)
-    const { roadmap, isLoading: isRoadmapLoading, markSubtopicDone } = useRoadmap(roadmapId, USER_ID); // TODO: actual userId
+    const { roadmap, isLoading: isRoadmapLoading, markSubtopicDone } = useRoadmap(roadmapId, USER_ID);
 
     // State
     const [content, setContent] = useState<SubtopicContentType | null>(null);
@@ -36,6 +37,18 @@ export default function SubtopicPage() {
     >("idle");
     const [errorMsg, setErrorMsg] = useState("");
     const [isRegenerating, setIsRegenerating] = useState(false);
+    const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+    const [trackedSeconds, setTrackedSeconds] = useState(0);
+
+    // Active Timer logic
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (document.hasFocus()) {
+                setTrackedSeconds(prev => prev + 1);
+            }
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
 
     // Derived
     const topic = roadmap?.topics.find((t) => t.order === topicOrder);
@@ -198,13 +211,23 @@ export default function SubtopicPage() {
             <Shell>
                 <div className="max-w-6xl mx-auto px-4 py-8">
                     {/* Nav */}
-                    <button
-                        onClick={() => router.back()}
-                        className="flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition group"
-                    >
-                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                        Back to Roadmap
-                    </button>
+                    <div className="flex items-center justify-between mb-6">
+                        <button
+                            onClick={() => router.back()}
+                            className="flex items-center gap-2 text-gray-400 hover:text-white transition group"
+                        >
+                            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                            Back to Roadmap
+                        </button>
+
+                        <button
+                            onClick={() => setIsLogModalOpen(true)}
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/30 text-blue-400 font-medium rounded-xl transition-all duration-300"
+                        >
+                            <Clock className="w-4 h-4" />
+                            Log Learning Time
+                        </button>
+                    </div>
 
                     {content && (
                         <SubtopicContent
@@ -215,6 +238,14 @@ export default function SubtopicPage() {
                             onToggleComplete={handleToggleComplete}
                         />
                     )}
+
+                    <LearningLogModal
+                        isOpen={isLogModalOpen}
+                        onClose={() => setIsLogModalOpen(false)}
+                        roadmapId={roadmapId}
+                        topicTitle={subtopic.title}
+                        suggestedMinutes={Math.floor(trackedSeconds / 60) || 1}
+                    />
                 </div>
             </Shell>
         </div>

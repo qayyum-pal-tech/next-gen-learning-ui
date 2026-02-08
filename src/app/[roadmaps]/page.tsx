@@ -2,8 +2,7 @@
 
 import { useRoadmaps } from "@/utils/hooks/useRoadmaps";
 import RoadmapCard from "../components/RoadmapCard";
-import { Sparkles, Plus } from "lucide-react";
-import Link from "next/link";
+import { Folder } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { useAuthStore } from "@/store/auth.store";
@@ -56,14 +55,7 @@ export default function DashboardPage() {
                     <div className="flex gap-8 min-w-min">
 
                         {/* Add New Card */}
-                        <Link href="/create" className="group relative w-[300px] h-[400px] flex-shrink-0 cursor-pointer">
-                            <div className="absolute inset-0 bg-white/5 rounded-3xl border border-white/10 border-dashed hover:border-cyan-500/50 hover:bg-white/10 transition-all duration-300 flex flex-col items-center justify-center gap-4">
-                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-cyan-500/20 transition-all">
-                                    <Plus className="w-8 h-8 text-gray-400 group-hover:text-cyan-400" />
-                                </div>
-                                <span className="font-bold text-gray-400 group-hover:text-white">Create A New Path</span>
-                            </div>
-                        </Link>
+
 
                         {isLoading ? (
                             // Loading Skeletons
@@ -71,9 +63,18 @@ export default function DashboardPage() {
                                 <div key={i} className="w-[300px] h-[400px] flex-shrink-0 bg-white/5 rounded-3xl animate-pulse border border-white/5" />
                             ))
                         ) : (
-                            roadmaps.map((roadmap) => (
+                            roadmaps.length > 0 ? roadmaps.map((roadmap) => (
                                 <RoadmapCard key={roadmap.id} roadmap={roadmap} />
-                            ))
+                            )) : (
+                                <div className="group relative w-[300px] h-[400px] flex-shrink-0">
+                                    <div className="absolute inset-0 bg-white/5 rounded-3xl border border-white/10 border-dashed flex flex-col items-center justify-center gap-4">
+                                        <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-cyan-500/20 transition-all">
+                                            <Folder className="w-8 h-8 text-gray-400 group-hover:text-cyan-400" />
+                                        </div>
+                                        <span className="font-bold text-gray-400 group-hover:text-white">No Roadmaps Found</span>
+                                    </div>
+                                </div>
+                            )
                         )}
                     </div>
                 </div>

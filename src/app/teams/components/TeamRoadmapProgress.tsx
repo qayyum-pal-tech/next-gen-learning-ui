@@ -134,6 +134,7 @@ export default function TeamRoadmapProgress({ teamId, roadmapId, onBack }: TeamR
                             isSelected={false}
                             isLocked={false} // Managers see all nodes
                             onClick={() => { }} // Interaction disabled as per request
+                            hideProgress={true}
                             memberIcons={node.members.map((m: any) => ({
                                 username: m.username,
                                 userId: m.userId,
