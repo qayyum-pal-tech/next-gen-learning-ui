@@ -79,3 +79,23 @@ export const getAvailableUsers = async (
   );
   return res.data; // array of users
 };
+
+
+export const shareRoadmap = async (payload: {
+  roadmapId: string | undefined;
+  shareType: 'TEAM' | 'USERS';
+  teamId?: string;
+  userIds?: string[];
+  sharedBy?: string;
+}) => {
+  const res = await api.post('/roadmaps/share', payload);
+  return res.data;
+};
+
+
+export const searchUsers = async (query: string) => {
+  const res = await api.get('/users/search', {
+    params: { q: query },
+  });
+  return res.data;
+};

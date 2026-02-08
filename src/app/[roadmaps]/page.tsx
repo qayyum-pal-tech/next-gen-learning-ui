@@ -5,14 +5,36 @@ import RoadmapCard from "../components/RoadmapCard";
 import { Sparkles, Plus } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { getMe } from "../teams/services/users.service";
 
 // Mock userId for now - in real app would come from auth context
-const USER_ID = "001";
+const USER_ID = "6985d2d810f14cfda7083a7b";
 
 export default function DashboardPage() {
-    const { roadmaps, isLoading } = useRoadmaps(USER_ID);
+    
+    // console.log("roadmaps",roadmaps);
     const [tick, setTick] = useState(0);
-
+    const [currentUser, setCurrentUser] = useState<any>(null);
+        const [loading, setLoading] = useState(false);
+    
+        console.log("currentuser",currentUser);
+      
+        useEffect(() => {
+          const load = async () => {
+            try {
+              setLoading(true)
+              const  meRes = await getMe();
+              setCurrentUser(meRes)
+            } catch (err) {
+              console.error(err)
+            } finally {
+              setLoading(false)
+            }
+          }
+          load()
+        }, [])
+        
+   const { roadmaps, isLoading } = useRoadmaps(USER_ID);
     /* star animation tick */
     useEffect(() => {
         const id = setInterval(() => setTick((t) => t + 1), 2000);
@@ -57,7 +79,7 @@ export default function DashboardPage() {
                                 <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-cyan-500/20 transition-all">
                                     <Plus className="w-8 h-8 text-gray-400 group-hover:text-cyan-400" />
                                 </div>
-                                <span className="font-bold text-gray-400 group-hover:text-white">Initialize New Journey</span>
+                                <span className="font-bold text-gray-400 group-hover:text-white">Create A New Path</span>
                             </div>
                         </Link>
 

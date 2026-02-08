@@ -16,7 +16,7 @@ import { Roadmap } from "@/types/types";
 
 import useSWR from "swr";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export function useRoadmaps(userId: string | null | undefined) {
   // key is null when userId is falsy  →  SWR won't fire

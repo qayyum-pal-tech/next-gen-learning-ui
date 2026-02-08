@@ -27,7 +27,7 @@ const navigation = [
   },
   {
     name: 'Learning',
-    path: '/learning',
+    path: '/roadmaps',
     icon: (
       <svg
         className="h-5 w-5"
@@ -171,7 +171,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
               </h1>
               <p className="text-gray-400 text-sm">
                 {pathname === '/teams' ? 'Collaborate and manage teams' : 
-                 pathname === '/learning' ? 'Expand your knowledge' : 
+                 pathname === '/roadmaps' ? 'Expand your knowledge' : 
                  'Monitor your learning progress'}
               </p>
             </div>
