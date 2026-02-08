@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { LogOut } from 'lucide-react'
+import { useAuthStore } from '@/store/auth.store'
 
 const navigation = [
   {
@@ -82,76 +83,130 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
   const [userName] = useState('John Doe')
   const pathname = usePathname()
   const router = useRouter()
+  const logout = useAuthStore((s) => s.logout);
 
   const handleLogout = () => {
     console.log('Logging out...')
-    router.push('/login')
+    logout();
   }
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 p-4">
+    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-900 to-gray-950 p-4">
+      {/* Sidebar */}
       <div
-        className={`sticky top-4 flex-shrink-0 rounded-2xl bg-gray-800/40 shadow-2xl transition-all duration-300 ${
-          sidebarExpanded ? 'w-48' : 'w-16'
+        className={`sticky top-4 flex-shrink-0 rounded-2xl bg-gradient-to-b from-gray-800 via-gray-800 to-gray-900 border border-gray-700 shadow-2xl transition-all duration-300 ${
+          sidebarExpanded ? 'w-56' : 'w-20'
         }`}
         style={{ height: 'calc(100vh - 2rem)' }}
         onMouseEnter={() => setSidebarExpanded(true)}
         onMouseLeave={() => setSidebarExpanded(false)}
       >
-        <div className="flex h-16 items-center justify-center border-b border-blue-500">
-          <div
-            className={`font-bold text-white ${sidebarExpanded ? 'text-xl' : 'text-lg'}`}
-          >
-            {sidebarExpanded ? 'LEARNHUB' : 'L'}
+        {/* Logo Section */}
+        <div className="flex h-20 items-center justify-center border-b border-gray-700">
+          <div className="flex items-center justify-center">
+            <div className={`font-bold ${sidebarExpanded ? 'text-2xl' : 'text-xl'}`}>
+              <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
+                {sidebarExpanded ? 'LEARNHUB' : 'LH'}
+              </span>
+            </div>
           </div>
         </div>
 
-        <nav className="mt-4 px-2">
+        {/* Navigation */}
+        <nav className="mt-6 px-3">
           {navigation.map((item) => {
             const isActive = pathname === item.path
             return (
               <button
                 key={item.name}
                 onClick={() => router.push(item.path)}
-                className={`my-1 flex w-full items-center rounded-xl px-3 py-3 transition-all duration-200 ${
+                className={`my-2 flex w-full items-center rounded-xl px-4 py-3.5 transition-all duration-300 ${
                   isActive
-                    ? 'translate-x-1 transform bg-blue-500 text-white shadow-lg'
-                    : 'text-white hover:bg-white/20 hover:text-white'
-                } ${sidebarExpanded ? 'justify-start' : 'justify-center'}`}
+                    ? 'bg-gradient-to-r from-blue-700 to-cyan-700 text-white shadow-lg transform translate-x-1'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                } ${sidebarExpanded ? 'justify-start gap-4' : 'justify-center'}`}
               >
-                <span className="text-lg">{item.icon}</span>
+                <span className={`transition-transform duration-300 ${isActive ? 'scale-110' : ''}`}>
+                  {item.icon}
+                </span>
                 {sidebarExpanded && (
-                  <span className="ml-3 font-medium">{item.name}</span>
+                  <span className="font-medium whitespace-nowrap">{item.name}</span>
                 )}
               </button>
             )
           })}
         </nav>
+
+        {/* User Profile (Bottom) */}
+        {sidebarExpanded && (
+          <div className="absolute bottom-6 left-0 right-0 px-4">
+            <div className="bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-700 rounded-xl p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold">
+                    {userName.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white font-medium truncate">{userName}</p>
+                  <p className="text-gray-400 text-xs truncate">Premium Member</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
+      {/* Main Content Area */}
       <div className="ml-4 flex min-h-[calc(100vh-2rem)] flex-1 flex-col">
-        <header className="mb-4 flex h-16 items-center justify-between rounded-2xl border-2 border-blue-500 bg-white px-8 shadow-lg">
-          <h1 className="text-xl font-semibold text-gray-800">
-            {getPageTitle(pathname)}
-          </h1>
+        {/* Header */}
+        <header className="mb-4 flex h-20 items-center justify-between rounded-2xl bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-700 px-8 shadow-xl">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-700 to-cyan-600 rounded-lg flex items-center justify-center">
+              {navigation.find(nav => nav.path === pathname)?.icon}
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-white">
+                {getPageTitle(pathname)}
+              </h1>
+              <p className="text-gray-400 text-sm">
+                {pathname === '/teams' ? 'Collaborate and manage teams' : 
+                 pathname === '/learning' ? 'Expand your knowledge' : 
+                 'Monitor your learning progress'}
+              </p>
+            </div>
+          </div>
 
-          <div className="flex items-center space-x-6">
-            <span className="hidden rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-sm text-blue-600 sm:block">
-              Welcome, {userName}
-            </span>
-
+          <div className="flex items-center space-x-4">
+            {sidebarExpanded ? null : (
+              <div className="hidden md:flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-900/40 to-cyan-900/30 border border-blue-800/30 px-4 py-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">
+                    {userName.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-white text-sm font-medium">Welcome back,</p>
+                  <p className="text-blue-300 text-sm font-semibold">{userName}</p>
+                </div>
+              </div>
+            )}
+            
             <button
               onClick={handleLogout}
-              className="rounded-xl border border-red-600 bg-red-500 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-red-600 hover:shadow-lg"
+              className="group px-6 py-3 bg-gradient-to-r from-red-700 to-pink-700 hover:from-red-600 hover:to-pink-600 text-white font-medium rounded-xl transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
             >
-              <LogOut className="mr-2 inline h-4 w-4" />
-              Logout
+              <LogOut className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+              <span className="whitespace-nowrap">Logout</span>
             </button>
           </div>
         </header>
 
-        <main className="flex-1 overflow-hidden rounded-2xl border-2 border-blue-500 bg-white p-8 shadow-xl">
-          <div className="h-full overflow-auto">{children}</div>
+        {/* Main Content */}
+        <main className="flex-1 overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 shadow-xl">
+          <div className="h-full overflow-auto p-6">
+            {children}
+          </div>
         </main>
       </div>
     </div>
