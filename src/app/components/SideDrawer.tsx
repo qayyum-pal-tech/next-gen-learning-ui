@@ -70,7 +70,7 @@ export default function SideDrawer({
                                 </h3>
                                 {topic.subtopics.map((subtopic) => (
                                     <button
-                                        key={subtopic._id}
+                                        key={subtopic.order}
                                         onClick={() => onSubtopicClick(topic.order, subtopic.order)}
                                         className="w-full group flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-cyan-500/30 hover:bg-white/10 transition-all text-left cursor-pointer"
                                     >

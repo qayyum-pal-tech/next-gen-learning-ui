@@ -12,6 +12,7 @@ interface QuizConfig {
   stepId?: string;
   subtopicId?: string;
   subtopicTitle?: string;
+  customizationData?: any;
 }
 
 interface QuizContextType {

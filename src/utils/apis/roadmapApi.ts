@@ -9,6 +9,17 @@ export async function fetchRoadmaps(userId: string): Promise<Roadmap[]> {
   return res.data;
 }
 
+/* ─── POST /roadmaps ─── */
+export async function createRoadmap(data: {
+  subject: string;
+  userId: string;
+  difficultyLevel?: string;
+  additionalContext?: string;
+}): Promise<Roadmap> {
+  const res = await apiClient.post<Roadmap>(`/roadmaps`, data);
+  return res.data;
+}
+
 /* ─── GET /roadmaps/:id?userId=:userId ─── */
 export async function fetchRoadmap(
   id: string,

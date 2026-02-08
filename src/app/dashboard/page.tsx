@@ -9,6 +9,7 @@ import QuizAssessmentModal from "@/components/QuizAssessmentModal";
 import { useRouter } from "next/navigation";
 import { useQuiz } from "@/context/QuizContext";
 import { useAuthStore } from "@/store/auth.store";
+import { createRoadmap } from '@/utils/apis/roadmapApi';
 
 interface TopicCategory {
   id: number;
@@ -29,9 +30,9 @@ export default function HomePage() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
-    const { user } = useAuthStore();
-    const USER_ID = user?._id || user?.id;
-  
+  const { user } = useAuthStore();
+  const USER_ID = user?._id || user?.id;
+
   // Debounce logic
   useEffect(() => {
     const timer = setTimeout(async () => {
@@ -44,11 +45,11 @@ export default function HomePage() {
               'Accept': 'application/json'
             }
           });
-          
+
           if (!res.ok) {
             throw new Error('Failed to fetch suggestions');
           }
-          
+
           const data = await res.json();
           setSuggestions(data.suggestions || data || []);
         } catch (error) {
@@ -68,11 +69,13 @@ export default function HomePage() {
 
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isFocused, setIsFocused] = useState<boolean>(false);
-  
+
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [courseTitle, setCourseTitle] = useState('');
   const [modalType, setModalType] = useState<'pathCreation' | 'quizAssessment'>('pathCreation');
+  const [customizationData, setCustomizationData] = useState<any>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Open modal for topic cards or search
   const openModal = (title: string) => {
@@ -86,10 +89,10 @@ export default function HomePage() {
     e.preventDefault();
     if (topic.trim()) {
       setIsSubmitted(true);
-      
+
       // Open modal with the entered topic
       openModal(topic);
-      
+
       setTimeout(() => setIsSubmitted(false), 3000);
     }
   };
@@ -204,11 +207,11 @@ export default function HomePage() {
             <Sparkles className="w-4 h-4 text-white mr-2" />
             <span className="text-sm font-medium text-white">AI-Powered Learning Platform</span>
           </div>
-         
+
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 animate-fade-in-up animation-delay-100">
             Transform Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Learning Journey</span>
           </h1>
-         
+
           <p className="text-xl text-gray-300 max-w-3xl mx-auto animate-fade-in-up animation-delay-200">
             Generate personalized, comprehensive video courses on any topic with our AI-powered platform
           </p>
@@ -235,34 +238,33 @@ export default function HomePage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
-                 
+
                   <input
                     type="text"
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
                     onFocus={() => {
-                        setIsFocused(true);
-                        if (topic.length > 1) setShowSuggestions(true);
+                      setIsFocused(true);
+                      if (topic.length > 1) setShowSuggestions(true);
                     }}
                     onBlur={() => {
-                        setIsFocused(false);
-                        // Delay hiding to allow click event on suggestion
-                        setTimeout(() => setShowSuggestions(false), 200);
+                      setIsFocused(false);
+                      // Delay hiding to allow click event on suggestion
+                      setTimeout(() => setShowSuggestions(false), 200);
                     }}
                     placeholder="What would you like to learn today?"
                     className="w-full pl-12 pr-40 py-4 text-lg rounded-2xl border-2 border-gray-700 bg-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/30 transition-all duration-300 placeholder-gray-500 font-medium text-white"
                     aria-label="Course topic input"
                   />
-                 
+
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center space-x-3">
                     <button
                       type="submit"
                       disabled={!topic.trim()}
-                      className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center space-x-2 transform hover:scale-105 ${
-                        topic.trim()
+                      className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center space-x-2 transform hover:scale-105 ${topic.trim()
                           ? 'bg-gradient-to-r from-indigo-600 to-purple-700 text-white shadow-lg hover:shadow-2xl hover:shadow-indigo-500/50'
                           : 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                      }`}
+                        }`}
                       aria-label="Generate course"
                     >
                       <span>Generate</span>
@@ -301,7 +303,7 @@ export default function HomePage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                         <span className="font-medium flex-1">{suggestion}</span>
-                        
+
                         {/* Arrow button to fill input */}
                         <button
                           type="button"
@@ -350,7 +352,7 @@ export default function HomePage() {
               <h3 className="font-bold text-lg mb-2 text-blue-300">AI-Powered</h3>
               <p className="text-gray-400 text-sm">Smart content generation</p>
             </div>
-           
+
             <div className="bg-gradient-to-br from-green-900/70 to-emerald-900/70 backdrop-blur-sm rounded-2xl p-6 text-center border border-green-800/50 hover:border-green-600 transition-all duration-300 hover:shadow-xl hover:shadow-green-500/20">
               <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-white shadow-2xl">
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -360,7 +362,7 @@ export default function HomePage() {
               <h3 className="font-bold text-lg mb-2 text-green-300">Comprehensive</h3>
               <p className="text-gray-400 text-sm">Complete learning paths</p>
             </div>
-           
+
             <div className="bg-gradient-to-br from-purple-900/70 to-pink-900/70 backdrop-blur-sm rounded-2xl p-6 text-center border border-purple-800/50 hover:border-purple-600 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/20">
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-white shadow-2xl">
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -379,10 +381,10 @@ export default function HomePage() {
             <h2 className="text-3xl font-bold text-white mb-4">Popular Learning Paths</h2>
             <p className="text-gray-400">Explore trending topics and skill sets</p>
           </div>
-         
+
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
             {topicCategories.map((category, index) => (
-              <div 
+              <div
                 key={category.id}
                 onClick={() => handleTopicCardClick(category.title)}
                 className="cursor-pointer transform hover:scale-105 transition-transform duration-300"
@@ -429,7 +431,10 @@ export default function HomePage() {
         courseTitle={courseTitle}
         isOpen={isModalOpen && modalType === 'pathCreation'}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={() => setModalType('quizAssessment')}
+        onSubmit={(data) => {
+          setCustomizationData(data);
+          setModalType('quizAssessment');
+        }}
       />
       <QuizAssessmentModal
         isOpen={isModalOpen && modalType === 'quizAssessment'}
@@ -441,13 +446,44 @@ export default function HomePage() {
             userId: USER_ID,
             assessmentType: 'PRE_ASSESSMENT',
             courseTitle: courseTitle,
+            customizationData: customizationData, // Pass customization data
           });
           router.push('/quiz');
           setIsModalOpen(false);
         }}
-        onSkipQuiz={() => {console.log('skip'); setIsModalOpen(false)}}
+        onSkipQuiz={async () => {
+          if (!USER_ID) return;
+
+          setIsGenerating(true);
+          try {
+            const newRoadmap = await createRoadmap({
+              subject: courseTitle,
+              userId: USER_ID,
+              difficultyLevel: customizationData?.depth?.toLowerCase(),
+              additionalContext: `Goal: ${customizationData?.goal}, Time: ${customizationData?.duration}h, Pace: ${customizationData?.speed}`
+            });
+
+            router.push(`/roadmap/${newRoadmap.id}`);
+          } catch (err) {
+            console.error("Failed to generate roadmap:", err);
+            alert("Failed to generate roadmap. Please try again.");
+          } finally {
+            setIsGenerating(false);
+            setIsModalOpen(false);
+          }
+        }}
         onBack={() => setModalType('pathCreation')}
       />
+
+      {isGenerating && (
+        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin mx-auto" />
+            <p className="text-xl font-bold text-white">Synthesizing Your Learning Path...</p>
+            <p className="text-gray-400">Our AI is mapping out your journey based on your goals.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -6,12 +6,13 @@ import confetti from "canvas-confetti";
 
 import { useSearchParams } from "next/navigation";
 import { useQuiz } from "@/context/QuizContext";
-import { 
-  Home, Target, BarChart3, 
-  Sparkles, Eye, TrendingUp, CheckCircle, 
-  AlertTriangle,  ChevronRight,
+import {
+  Home, Target, BarChart3,
+  Sparkles, Eye, TrendingUp, CheckCircle,
+  AlertTriangle, ChevronRight,
   BrainCircuit
 } from "lucide-react";
+import { createRoadmap } from '@/utils/apis/roadmapApi';
 
 const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -54,31 +55,32 @@ export default function ResultsPage({
   const [loading, setLoading] = useState(true);
   const [animatedScore, setAnimatedScore] = useState(0);
   const [animatedPercent, setAnimatedPercent] = useState(0);
-  
+
   const [showFeedback, setShowFeedback] = useState(false);
   const [typedFeedback, setTypedFeedback] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  
+
   const [showStrengths, setShowStrengths] = useState(false);
   const [typedStrengths, setTypedStrengths] = useState<string[]>([]);
   const [showWeaknesses, setShowWeaknesses] = useState(false);
   const [typedWeaknesses, setTypedWeaknesses] = useState<string[]>([]);
-   const { quizConfig } = useQuiz();
-   const searchParams = useSearchParams();
-   const USER_ID =  quizConfig?.userId || searchParams.get("userId");
-  
+  const { quizConfig } = useQuiz();
+  const searchParams = useSearchParams();
+  const USER_ID = quizConfig?.userId || searchParams.get("userId");
+  const [isGenerating, setIsGenerating] = useState(false);
+
 
   useEffect(() => {
     const fetchResults = async () => {
       try {
-      
+
 
         const res = await fetch(`${API_URL}/quiz/results/${quizId}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ quizId,userId: USER_ID }),
+          body: JSON.stringify({ quizId, userId: USER_ID }),
         });
 
         if (!res.ok) throw new Error("Failed to load results");
@@ -86,7 +88,7 @@ export default function ResultsPage({
         const response = await res.json();
         const resultData = response.data;
         setResult(resultData);
-        
+
         const targetPercent = resultData.percentage;
         const userScore = resultData.score;
         let currentScore = 0;
@@ -178,6 +180,37 @@ export default function ResultsPage({
     }
   }, [showWeaknesses, result?.weaknesses]);
 
+  const handleGenerateRoadmap = async () => {
+    if (!result || !USER_ID) return;
+
+    setIsGenerating(true);
+    try {
+      const { customizationData, courseTitle } = quizConfig || {};
+
+      const newRoadmap = await createRoadmap({
+        subject: courseTitle || result.category,
+        userId: USER_ID,
+        difficultyLevel: customizationData?.depth?.toLowerCase() || 'intermediate',
+        additionalContext: `
+          Goal: ${customizationData?.goal || 'General Learning'}, 
+          Time: ${customizationData?.duration || 20}h, 
+          Pace: ${customizationData?.speed || 'Fast Track'},
+          Quiz Score: ${result.percentage}%,
+          Strengths: ${result.strengths.join(', ')},
+          Weaknesses: ${result.weaknesses.join(', ')},
+          AI Feedback: ${result.performanceFeedback}
+        `
+      });
+
+      router.push(`/roadmap/${newRoadmap.id}`);
+    } catch (err) {
+      console.error("Failed to generate roadmap:", err);
+      alert("Failed to generate roadmap. Please try again.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
 
   if (loading) {
     return (
@@ -199,7 +232,7 @@ export default function ResultsPage({
 
       <main className="flex-1 relative z-10 w-full overflow-y-auto custom-scrollbar">
         <div className="max-w-4xl mx-auto px-4 py-6 md:py-8">
-          
+
           {/* Header */}
           <div className="text-center mb-8 space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5 backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-700">
@@ -212,13 +245,13 @@ export default function ResultsPage({
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            
+
             {/* Left Column: Core Metrics */}
             <div className="lg:col-span-5 space-y-5">
               <div className="bg-slate-900/40 backdrop-blur-2xl rounded-2xl border border-white/5 p-6 shadow-2xl relative overflow-hidden group">
                 {/* Visual Card Glow */}
                 <div className="absolute -top-16 -right-16 w-32 h-32 bg-blue-600/5 rounded-full blur-[50px] group-hover:bg-blue-600/10 transition-all duration-500" />
-                
+
                 <div className="relative z-10 space-y-6">
                   <div className="space-y-0.5">
                     <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-1">Subtopic Mastery</p>
@@ -256,11 +289,11 @@ export default function ResultsPage({
                         <span className="text-[8px] font-bold text-slate-500 uppercase tracking-tighter">Accuracy</span>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-1.5">
-                       <p className="text-slate-400 text-xs leading-relaxed font-medium">
-                         Performance indicates a professional grasp of core conceptual patterns in this module.
-                       </p>
+                      <p className="text-slate-400 text-xs leading-relaxed font-medium">
+                        Performance indicates a professional grasp of core conceptual patterns in this module.
+                      </p>
                     </div>
                   </div>
 
@@ -309,13 +342,18 @@ export default function ResultsPage({
 
                 {/* Shimmering CTA - Tightened */}
                 <button
-                  onClick={() => router.push(`/learning-path/${quizId}`)}
-                  className="sm:col-span-2 relative h-12 w-full overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 font-bold text-xs text-white shadow-xl shadow-blue-500/20 hover:scale-[1.01] transition-all group"
+                  onClick={handleGenerateRoadmap}
+                  disabled={isGenerating}
+                  className="sm:col-span-2 relative h-12 w-full overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 font-bold text-xs text-white shadow-xl shadow-blue-500/20 hover:scale-[1.01] transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
                   <div className="relative flex items-center justify-center gap-2.5">
-                    <BrainCircuit className="w-4 h-4" />
-                    Generate AI Learning Path
+                    {isGenerating ? (
+                      <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <BrainCircuit className="w-4 h-4" />
+                    )}
+                    {isGenerating ? "Synthesizing Path..." : "Generate AI Learning Path"}
                   </div>
                 </button>
 
@@ -332,23 +370,21 @@ export default function ResultsPage({
             {/* Right Column: AI Insights */}
             <div className="lg:col-span-7 space-y-6">
               {/* Primary AI Report */}
-              <div 
-                className={`group relative p-6 rounded-2xl border transition-all duration-500 cursor-pointer overflow-hidden ${
-                  showFeedback 
-                    ? "bg-slate-900/60 border-blue-500/20 shadow-2xl backdrop-blur-2xl" 
+              <div
+                className={`group relative p-6 rounded-2xl border transition-all duration-500 cursor-pointer overflow-hidden ${showFeedback
+                    ? "bg-slate-900/60 border-blue-500/20 shadow-2xl backdrop-blur-2xl"
                     : "bg-slate-900/40 border-white/5 hover:border-blue-500/20"
-                }`}
+                  }`}
                 onClick={() => setShowFeedback(true)}
               >
                 <div className="absolute -bottom-10 -right-10 w-24 h-24 bg-blue-600/5 rounded-full blur-2xl pointer-events-none group-hover:bg-blue-600/10 transition-all" />
-                
+
                 <div className="relative z-10 flex gap-5">
-                  <div className={`p-3 h-fit rounded-xl transition-all duration-500 ${
-                    showFeedback ? "bg-blue-500/20 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.15)]" : "bg-white/5 text-slate-600"
-                  }`}>
+                  <div className={`p-3 h-fit rounded-xl transition-all duration-500 ${showFeedback ? "bg-blue-500/20 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.15)]" : "bg-white/5 text-slate-600"
+                    }`}>
                     <Sparkles className={`w-6 h-6 ${showFeedback ? "animate-pulse" : ""}`} />
                   </div>
-                  
+
                   <div className="flex-1 space-y-2">
                     {!showFeedback ? (
                       <>
@@ -376,10 +412,9 @@ export default function ResultsPage({
 
               {/* Progress Detail Grids */}
               <div className="flex flex-col gap-5">
-                <div 
-                  className={`p-6 rounded-2xl border transition-all duration-500 cursor-pointer overflow-hidden relative ${
-                    showStrengths ? "bg-emerald-500/5 border-emerald-500/10 shadow-2xl backdrop-blur-2xl" : "bg-slate-900/40 border-white/5 hover:border-emerald-500/10"
-                  }`}
+                <div
+                  className={`p-6 rounded-2xl border transition-all duration-500 cursor-pointer overflow-hidden relative ${showStrengths ? "bg-emerald-500/5 border-emerald-500/10 shadow-2xl backdrop-blur-2xl" : "bg-slate-900/40 border-white/5 hover:border-emerald-500/10"
+                    }`}
                   onClick={() => setShowStrengths(true)}
                 >
                   <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 blur-2xl rounded-full" />
@@ -405,10 +440,9 @@ export default function ResultsPage({
                   </div>
                 </div>
 
-                <div 
-                  className={`p-6 rounded-2xl border transition-all duration-500 cursor-pointer overflow-hidden relative ${
-                    showWeaknesses ? "bg-rose-500/5 border-rose-500/10 shadow-2xl backdrop-blur-2xl" : "bg-slate-900/40 border-white/5 hover:border-rose-500/10"
-                  }`}
+                <div
+                  className={`p-6 rounded-2xl border transition-all duration-500 cursor-pointer overflow-hidden relative ${showWeaknesses ? "bg-rose-500/5 border-rose-500/10 shadow-2xl backdrop-blur-2xl" : "bg-slate-900/40 border-white/5 hover:border-rose-500/10"
+                    }`}
                   onClick={() => setShowWeaknesses(true)}
                 >
                   <div className="absolute bottom-0 right-0 w-24 h-24 bg-rose-500/5 blur-2xl rounded-full" />
