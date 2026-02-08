@@ -1,6 +1,7 @@
 'use client'
 import './globals.css'
 import SwrProvider from '@/utils/providers/SwrProvider'
+import { QuizProvider } from '@/context/QuizContext'
 import { Sidebar } from '@/components/Sidebar'
 import Chatbot from '@/components/Chatbot'
 import './globals.css'
@@ -22,16 +23,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-gray-50">
-        {isPublicRoute ? (
-          children
-        ) : (
-          <SwrProvider>
-            <Sidebar>
-              {children}
-              <Chatbot />{' '}
-            </Sidebar>
-          </SwrProvider>
-        )}
+        <QuizProvider>
+          {isPublicRoute ? (
+            children
+          ) : (
+            <SwrProvider>
+              <Sidebar>
+                {children}
+                <Chatbot />{' '}
+              </Sidebar>
+            </SwrProvider>
+          )}
+        </QuizProvider>
       </body>
     </html>
   )

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRoadmap } from "@/utils/hooks/useRoadmap";
 import { useRouter, usePathname } from "next/navigation";
+import { useQuiz } from "@/context/QuizContext";
 import RoadmapPath from "./RoadmapPath";
 import PlanetNode from "./PlanetNode";
 import SideDrawer from "./SideDrawer";
@@ -17,19 +18,18 @@ interface RoadmapPageProps {
   roadmapId: string;
   userId: string | null | undefined;
   onSubtopicOpen?: (topicOrder: number, subtopicOrder: number) => void;
-  onTakeQuiz?: (topicOrder: number) => void;
 }
 
 export default function RoadmapPage({
   roadmapId,
   userId,
   onSubtopicOpen,
-  onTakeQuiz,
 }: RoadmapPageProps) {
   /* ── data ── */
   const { roadmap, isLoading, error, markTopicDone } = useRoadmap(roadmapId, userId);
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const [tick, setTick] = useState(0);
+  const { setQuizConfig } = useQuiz();
 
   const router = useRouter();
   const pathname = usePathname();
@@ -40,6 +40,23 @@ export default function RoadmapPage({
     } else {
       router.push(`${pathname}/topic/${topicOrder}/subtopic/${subtopicOrder}`);
     }
+  };
+
+  const onTakeQuiz = (topicOrder: number) => {
+    const topic = safeRoadmap.topics.find(t => t.order === topicOrder);
+    if (!topic) return;
+    
+    // Set quiz configuration in context
+    setQuizConfig({
+      pathId: roadmapId,
+      userId: userId || '',
+      stepId: selectedTopic?._id,
+      assessmentType: 'SKILL_CHECK',
+      categoryTitle: topic.title,
+    });
+    
+    // Navigate to quiz page
+    router.push('/quiz');
   };
 
   /* star animation tick */

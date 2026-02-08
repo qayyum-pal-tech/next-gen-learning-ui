@@ -63,6 +63,25 @@ const navigation = [
             </svg>
         ),
     },
+      {
+    name: 'History',
+    path: '/history',
+    icon: (
+      <svg
+        className="h-5 w-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+    ),
+  },
 ]
 
 const getPageTitle = (pathname: string) => {
@@ -73,6 +92,8 @@ const getPageTitle = (pathname: string) => {
             return 'Learning Space'
         case '/teams':
             return 'Teams & Groups'
+        case '/history':
+            return 'History'
         default:
             return 'Dashboard'
     }
@@ -80,11 +101,11 @@ const getPageTitle = (pathname: string) => {
 
 export function Sidebar({ children }: { children: React.ReactNode }) {
     const [sidebarExpanded, setSidebarExpanded] = useState(false)
-    const user = useAuthStore((s: any) => s.user);
+    const user = useAuthStore((s) => s.user);
     const userName = user?.username || 'User';
     const pathname = usePathname()
     const router = useRouter()
-    const logout = useAuthStore((s: any) => s.logout);
+    const logout = useAuthStore((s) => s.logout);
 
     const handleLogout = () => {
         console.log('Logging out...')
