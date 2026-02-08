@@ -1,8 +1,11 @@
 'use client';
-
-import Chatbot from '@/components/Chatbot';
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import SwrProvider from "@/utils/providers/SwrProvider";
+import { Sidebar } from "@/components/Sidebar";
+import Chatbot from "@/components/Chatbot";
 import './globals.css';
-import { Sidebar } from '@/components/Sidebar';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
 import { usePathname } from 'next/navigation';
 
@@ -29,6 +32,10 @@ export default function RootLayout({
             <Chatbot />
           </Sidebar>
         )}
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <SwrProvider><Sidebar>{children}<Chatbot /> </Sidebar></SwrProvider>
       </body>
     </html>
   );
