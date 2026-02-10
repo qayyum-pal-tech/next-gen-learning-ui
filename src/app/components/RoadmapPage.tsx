@@ -45,16 +45,16 @@ export default function RoadmapPage({
   const onTakeQuiz = (topicOrder: number) => {
     const topic = safeRoadmap.topics.find(t => t.order === topicOrder);
     if (!topic) return;
-    
+
     // Set quiz configuration in context
     setQuizConfig({
       pathId: roadmapId,
       userId: userId || '',
-      stepId: selectedTopic?._id,
+      stepId: topic.order.toString(),
       assessmentType: 'SKILL_CHECK',
       categoryTitle: topic.title,
     });
-    
+
     // Navigate to quiz page
     router.push('/quiz');
   };
@@ -78,7 +78,7 @@ export default function RoadmapPage({
 
   // Node Calculation
   const SPACING = 120; // Reduced spacing
-  const START_Y = 100; // Initial padding
+  const START_Y = 150; // Increased padding to account for header
   const AMPLITUDE = 25; // How wide the zig-zag is (from center: 50 +/- 25)
 
   const nodes = safeRoadmap.topics.map((topic, index) => {
@@ -153,12 +153,23 @@ export default function RoadmapPage({
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto min-h-screen" style={{ height: totalHeight }}>
-        {/* Header */}
-        <div className="sticky top-0 z-30 pt-8 pb-12 bg-gradient-to-b from-[#050510] to-transparent pointer-events-none">
-          <div className="text-center pointer-events-auto">
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-cyan-300 via-white to-purple-300 bg-clip-text text-transparent mb-2">
+        <div className="sticky top-0 z-30 pt-6 pb-10 pointer-events-none">
+          <div className="absolute"
+            style={{ height: '180px' }} />
+
+          <div className="absolute"
+            style={{ height: '140px' }} />
+
+          <div className="relative text-center pointer-events-auto px-4">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-cyan-300 via-white to-purple-300 bg-clip-text text-transparent leading-tight mx-auto max-w-3xl break-words">
               {roadmap.subject.toUpperCase()}
             </h1>
+
+            {/* Optional: Progress indicator */}
+            <div className="mt-3 flex items-center justify-center gap-2 text-cyan-400/80 text-sm">
+              <Rocket className="w-4 h-4" />
+              <span>{safeRoadmap.progressPercentage}% Complete</span>
+            </div>
           </div>
         </div>
 

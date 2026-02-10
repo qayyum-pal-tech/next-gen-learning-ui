@@ -1,39 +1,25 @@
-'use client'
+import type { Metadata } from 'next'
 import './globals.css'
-import SwrProvider from '@/utils/providers/SwrProvider'
 import { QuizProvider } from '@/context/QuizContext'
-import { Sidebar } from '@/components/Sidebar'
-import Chatbot from '@/components/Chatbot'
-import './globals.css'
-import { useProtectedRoute } from '@/hooks/useProtectedRoute'
-import { usePathname } from 'next/navigation'
+import ClientLayout from './ClientLayout'
 
-const PUBLIC_ROUTES = ['/auth/login', '/auth/register']
+export const metadata: Metadata = {
+  title: 'LearnHub',
+  icons: {
+    icon: '/icon.png',
+  },
+}
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  useProtectedRoute()
-
-  const pathname = usePathname()
-  const isPublicRoute = PUBLIC_ROUTES.includes(pathname)
-
   return (
     <html lang="en">
       <body className="bg-gray-50">
         <QuizProvider>
-          {isPublicRoute ? (
-            children
-          ) : (
-            <SwrProvider>
-              <Sidebar>
-                {children}
-                <Chatbot />{' '}
-              </Sidebar>
-            </SwrProvider>
-          )}
+          <ClientLayout>{children}</ClientLayout>
         </QuizProvider>
       </body>
     </html>

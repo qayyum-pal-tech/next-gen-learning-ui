@@ -3,10 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { registerUser } from '../auth.service';
+import { Mail, User, Lock, AlertCircle, Loader2, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const [form, setForm] = useState({
     email: '',
@@ -15,88 +18,191 @@ export default function RegisterPage() {
   });
 
   const handleRegister = async () => {
-  if (!form.email || !form.username || !form.password) {
-    alert('All fields are required');
-    return;
-  }
+    setError('');
 
-  try {
-    setLoading(true);
-    await registerUser(form);
-    router.replace('/auth/login');
-  } finally {
-    setLoading(false);
-  }
-};
+    // Validation
+    if (!form.email || !form.username || !form.password) {
+      setError('All fields are required');
+      return;
+    }
 
+    if (!/\S+@\S+\.\S+/.test(form.email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    if (form.username.length < 3) {
+      setError('Username must be at least 3 characters long');
+      return;
+    }
+
+    if (form.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await registerUser(form);
+      router.replace('/auth/login');
+    } catch (err: any) {
+      console.error("Registration Error", err);
+      setError(
+        err?.response?.data?.message ||
+        err?.message ||
+        'Failed to create account. Please try again.'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !loading) {
+      handleRegister();
+    }
+  };
 
   return (
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
-        <h1 className="text-3xl font-bold text-gray-900">Create account ✨</h1>
-        <p className="mt-2 text-sm text-gray-600">
-          Join NextGen Learning today
-        </p>
+    <div className="w-full max-w-md">
+      <div className="rounded-2xl border border-gray-800 bg-gray-900 p-8 shadow-2xl">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-3xl font-bold text-transparent">
+            Create account ✨
+          </h1>
+          <p className="mt-2 text-sm text-gray-400">
+            Join NextGen Learning today
+          </p>
+        </div>
 
-        <div className="mt-6 space-y-4">
+        {/* Error Alert */}
+        {error && (
+          <div className="mb-6 animate-in fade-in slide-in-from-top-1 rounded-lg border border-red-500/20 bg-red-500/10 p-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-400" />
+              <div className="flex-1">
+                <p className="text-sm text-red-300">{error}</p>
+              </div>
+              <button
+                onClick={() => setError('')}
+                className="text-red-400 transition hover:text-red-300"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Form */}
+        <div className="space-y-5">
+          {/* Email Field */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-300">
               Email
             </label>
-            <input
-              placeholder="you@example.com"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-              onChange={(e) =>
-                setForm({ ...form, email: e.target.value })
-              }
-            />
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <Mail className="h-5 w-5 text-gray-500" />
+              </div>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                onKeyPress={handleKeyPress}
+                className="w-full rounded-lg border border-gray-700 bg-gray-800/50 py-2.5 pl-10 pr-4 text-sm text-white placeholder-gray-500 transition focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              />
+            </div>
           </div>
 
+          {/* Username Field */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-300">
               Username
             </label>
-            <input
-              placeholder="your name"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-              onChange={(e) =>
-                setForm({ ...form, username: e.target.value })
-              }
-            />
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <User className="h-5 w-5 text-gray-500" />
+              </div>
+              <input
+                type="text"
+                placeholder="your name"
+                value={form.username}
+                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                onKeyPress={handleKeyPress}
+                className="w-full rounded-lg border border-gray-700 bg-gray-800/50 py-2.5 pl-10 pr-4 text-sm text-white placeholder-gray-500 transition focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              />
+            </div>
           </div>
 
+          {/* Password Field */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-300">
               Password
             </label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-              onChange={(e) =>
-                setForm({ ...form, password: e.target.value })
-              }
-            />
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <Lock className="h-5 w-5 text-gray-500" />
+              </div>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                onKeyPress={handleKeyPress}
+                className="w-full rounded-lg border border-gray-700 bg-gray-800/50 py-2.5 pl-10 pr-10 text-sm text-white placeholder-gray-500 transition focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-400"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+            <p className="mt-2 text-xs text-gray-500">
+              Must be at least 6 characters long
+            </p>
           </div>
 
+          {/* Submit Button */}
           <button
             onClick={handleRegister}
             disabled={loading}
-            className="mt-2 w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
+            className="mt-6 w-full rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition hover:from-emerald-500 hover:to-teal-500 hover:shadow-emerald-500/40 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:from-emerald-600 disabled:hover:to-teal-600"
           >
-            {loading ? 'Creating account...' : 'Register'}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Creating account...
+              </span>
+            ) : (
+              <span className="flex items-center justify-center gap-2">
+                <CheckCircle2 className="h-5 w-5" />
+                Register
+              </span>
+            )}
           </button>
         </div>
 
-        <p className="mt-6 text-center text-sm text-gray-600">
+        {/* Footer */}
+        <p className="mt-6 text-center text-sm text-gray-400">
           Already have an account?{' '}
           <span
-            className="cursor-pointer font-medium text-emerald-600 hover:underline"
+            className="cursor-pointer font-medium text-emerald-400 transition hover:text-emerald-300 hover:underline"
             onClick={() => router.push('/auth/login')}
           >
             Login
           </span>
         </p>
       </div>
-    
+    </div>
   );
 }

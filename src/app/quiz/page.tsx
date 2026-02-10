@@ -7,7 +7,7 @@ import QuizLanding from "@/components/QuizLandingPage";
 export default function QuizStartPage() {
   const searchParams = useSearchParams();
   const { quizConfig } = useQuiz();
-  
+
   // Use context config if available, otherwise fall back to query params
   const pathId = quizConfig?.pathId || searchParams.get("pathId") || "learning-path-default";
   const userId = quizConfig?.userId || searchParams.get("userId") || "user123";
@@ -21,5 +21,8 @@ export default function QuizStartPage() {
     assessmentType={assessmentType}
     categoryTitle={categoryTitle}
     courseTitle={courseTitle || undefined}
+    stepId={quizConfig?.stepId}
+    subtopicId={quizConfig?.subtopicId}
+    subtopicTitle={quizConfig?.subtopicTitle}
   />
 }

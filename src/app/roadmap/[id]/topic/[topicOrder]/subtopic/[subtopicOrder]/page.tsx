@@ -22,7 +22,6 @@ export default function SubtopicPage() {
     const { user } = useAuthStore();
     const USER_ID = user?._id || user?.id;
     // Parse params
-    // app/[roadmaps]/[id]/topic/[topicOrder]/subtopic/[subtopicOrder]
     const roadmapId = params?.id as string;
     const topicOrder = parseInt(params?.topicOrder as string);
     const subtopicOrder = parseInt(params?.subtopicOrder as string);
@@ -63,9 +62,6 @@ export default function SubtopicPage() {
         }
     };
 
-    console.log("topic", topic);
-    console.log("subtopic", subtopic);
-
     // 2. Main Logic: Check Exists -> Fetch or Generate
     useEffect(() => {
         if (!roadmap || !topic || !subtopic) return;
@@ -105,7 +101,6 @@ export default function SubtopicPage() {
         };
 
         init();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [roadmapId, topicOrder, subtopicOrder, !!roadmap, !!topic, !!subtopic, status]);
 
     // Handlers

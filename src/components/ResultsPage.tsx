@@ -18,6 +18,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface QuizResult {
   quizId: string;
+  pathId?: string;
   category: string;
   subcategory: string;
   assessmentType: 'PRE_ASSESSMENT' | 'SKILL_CHECK';
@@ -341,28 +342,36 @@ export default function ResultsPage({
                 </button>
 
                 {/* Shimmering CTA - Tightened */}
-                <button
-                  onClick={handleGenerateRoadmap}
-                  disabled={isGenerating}
-                  className="sm:col-span-2 relative h-12 w-full overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 font-bold text-xs text-white shadow-xl shadow-blue-500/20 hover:scale-[1.01] transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
-                  <div className="relative flex items-center justify-center gap-2.5">
-                    {isGenerating ? (
-                      <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                    ) : (
-                      <BrainCircuit className="w-4 h-4" />
-                    )}
-                    {isGenerating ? "Synthesizing Path..." : "Generate AI Learning Path"}
-                  </div>
-                </button>
+                {result.assessmentType === 'PRE_ASSESSMENT' && (
+                  <button
+                    onClick={handleGenerateRoadmap}
+                    disabled={isGenerating}
+                    className="sm:col-span-2 relative h-12 w-full overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 font-bold text-xs text-white shadow-xl shadow-blue-500/20 hover:scale-[1.01] transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
+                    <div className="relative flex items-center justify-center gap-2.5">
+                      {isGenerating ? (
+                        <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                      ) : (
+                        <BrainCircuit className="w-4 h-4" />
+                      )}
+                      {isGenerating ? "Synthesizing Path..." : "Generate AI Learning Path"}
+                    </div>
+                  </button>
+                )}
 
                 <button
-                  onClick={() => router.push("/dashboard")}
+                  onClick={() => {
+                    if (result.assessmentType === 'SKILL_CHECK' && result.pathId) {
+                      router.push(`/roadmap/${result.pathId}`);
+                    } else {
+                      router.push("/dashboard");
+                    }
+                  }}
                   className="sm:col-span-2 flex items-center justify-center gap-2 py-3 text-slate-500 hover:text-white transition-colors text-[10px] uppercase font-black tracking-widest"
                 >
                   <Home className="w-3.5 h-3.5" />
-                  Return to Dashboard
+                  {result.assessmentType === 'SKILL_CHECK' ? "Return to Roadmap" : "Return to Dashboard"}
                 </button>
               </div>
             </div>
@@ -372,8 +381,8 @@ export default function ResultsPage({
               {/* Primary AI Report */}
               <div
                 className={`group relative p-6 rounded-2xl border transition-all duration-500 cursor-pointer overflow-hidden ${showFeedback
-                    ? "bg-slate-900/60 border-blue-500/20 shadow-2xl backdrop-blur-2xl"
-                    : "bg-slate-900/40 border-white/5 hover:border-blue-500/20"
+                  ? "bg-slate-900/60 border-blue-500/20 shadow-2xl backdrop-blur-2xl"
+                  : "bg-slate-900/40 border-white/5 hover:border-blue-500/20"
                   }`}
                 onClick={() => setShowFeedback(true)}
               >
