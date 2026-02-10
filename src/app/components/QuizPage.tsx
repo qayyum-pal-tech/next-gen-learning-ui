@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
-import QuizQuestion from "@/components/QuizQuestion";
+import QuizQuestion from "@/app/components/QuizQuestion";
 import { useQuiz } from "@/context/QuizContext";
 
 const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "=http://localhost:8000";
@@ -34,14 +34,17 @@ export default function QuizPage() {
   const [userAnswer, setUserAnswer] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [progress, setProgress] = useState({ current: 1, total: 5 }); // Default 5 questions
+  const [progress, setProgress] = useState({ current: 1, total: 0 }); // Initialize with 0 to indicate unknown total
   const { quizConfig } = useQuiz();
   const searchParams = useSearchParams();
+
+  const hasInitialized = useRef(false);
 
   // Fetch quiz details and start/resume
   useEffect(() => {
     const startQuiz = async () => {
-      if (!quizId) return;
+      if (!quizId || hasInitialized.current) return;
+      hasInitialized.current = true;
 
       try {
         const token = localStorage.getItem("token");
@@ -86,9 +89,13 @@ export default function QuizPage() {
         const data = response.data;
 
         setCurrentQuestion(data.question);
+        
+        // Use questions count from details or start response, defaulting to whatever the backend sent if not explicit
+        const totalQuestions = details.data.questionsCount || data.questionsCount || data.totalQuestions || (data.question ? 5 : 0);
+        
         setProgress({
           current: data.currentQuestionNumber || 1,
-          total: details.data.questionsCount || 5,
+          total: totalQuestions,
         });
       } catch (err: any) {
         console.error("Start quiz error:", err);

@@ -67,8 +67,10 @@ export async function markSubtopicCompleted(
 }
 
 /* ─── GET /roadmaps/team/:teamId ─── */
-export async function fetchTeamRoadmaps(teamId: string): Promise<any[]> {
-  const res = await apiClient.get<any[]>(`/roadmaps/team/${teamId}`);
+export async function fetchTeamRoadmaps(teamId: string, userId?: string): Promise<any[]> {
+  const res = await apiClient.get<any[]>(`/roadmaps/team/${teamId}`, {
+    params: { userId },
+  });
   return res.data;
 }
 

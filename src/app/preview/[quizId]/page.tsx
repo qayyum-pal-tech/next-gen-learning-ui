@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Question from "@/components/QuizQuestion";
+import Question from "@/app/components/QuizQuestion";
 import { 
   ChevronLeft, ChevronRight, BarChart3, 
    Award,  ArrowLeft,
@@ -139,7 +139,7 @@ export default function QuizPreviewPage() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <button
-              onClick={() => router.push("/history")}
+              onClick={() => router.back()}
               className="p-2 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-all group"
               title="Back to History"
             >

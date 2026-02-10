@@ -2,10 +2,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import TopicCard from "@/components/TopicCard";
+import TopicCard from "@/app/components/TopicCard";
 import { ArrowRight, Sparkles, GraduationCap, Rocket, Brain, BookOpen, Loader2 } from 'lucide-react';
-import PathCreationModal from "@/components/PathCreationModal";
-import QuizAssessmentModal from "@/components/QuizAssessmentModal";
+import PathCreationModal from "@/app/components/PathCreationModal";
+import QuizAssessmentModal from "@/app/components/QuizAssessmentModal";
 import { useRouter } from "next/navigation";
 import { useQuiz } from "@/context/QuizContext";
 import { useAuthStore } from "@/store/auth.store";
@@ -79,9 +79,12 @@ export default function HomePage() {
 
   // Open modal for topic cards or search
   const openModal = (title: string) => {
-    setIsModalOpen(true);
-    setCourseTitle(title);
-    setModalType('pathCreation');
+    // Add minute visible delay for smoother user experience
+    setTimeout(() => {
+      setIsModalOpen(true);
+      setCourseTitle(title);
+      setModalType('pathCreation');
+    }, 500); // 500ms delay
   };
 
   // Handle form submission
@@ -441,6 +444,7 @@ export default function HomePage() {
         onClose={() => setIsModalOpen(false)}
         onTakeQuiz={() => {
           // Use context instead of query params
+          console.log("quiz starting",courseTitle,USER_ID)
           setQuizConfig({
             pathId: 'learning-path-default',
             userId: USER_ID,

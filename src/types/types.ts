@@ -32,6 +32,7 @@ export interface Roadmap {
   id?: string;
   subject: string;
   userId: string;
+  version?: string;
   description?: string;
   topics: Topic[];
   status: "not_started" | "in_progress" | "completed";

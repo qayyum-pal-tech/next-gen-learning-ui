@@ -31,7 +31,7 @@ export default function DashboardPage() {
     }));
 
     return (
-        <div className="min-h-full w-full relative p-8">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 p-4 sm:p-6 lg:p-8 rounded relative overflow-hidden">
             {/* Background Stars (localized to dashboard area) */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 {STARS.map((star, i) => (
@@ -49,7 +49,16 @@ export default function DashboardPage() {
                 ))}
             </div>
 
-            <div className="relative z-10 space-y-8">
+            <div className="max-w-7xl mx-auto relative z-10 space-y-8">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                            Learning Roadmaps
+                        </h1>
+                        <p className="text-gray-400 mt-4">Expand your knowledge with personalized learning paths</p>
+                    </div>
+                </div>
                 {/* Grid Container */}
                 <div className="w-full">
                     {isLoading ? (

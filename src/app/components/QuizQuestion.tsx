@@ -137,7 +137,7 @@ export default function Question({
           <div className="relative w-full bg-white/5 rounded-full h-1 overflow-hidden">
             <div
               className="absolute top-0 left-0 h-full rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 transition-all duration-700 shadow-[0_0_8px_rgba(59,130,246,0.5)]"
-              style={{ width: `${(currentQuestion / totalQuestions) * 100}%` }}
+              style={{ width: `${totalQuestions > 0 ? (currentQuestion / totalQuestions) * 100 : 0}%` }}
             />
           </div>
         )}

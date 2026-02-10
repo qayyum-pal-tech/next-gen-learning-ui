@@ -1,4 +1,4 @@
-import ResultsPage from "@/components/ResultsPage";
+import ResultsPage from "@/app/components/ResultsPage";
 
 export default async function Page({ params }: { params: Promise<{ quizId: string }> }) {
     return (

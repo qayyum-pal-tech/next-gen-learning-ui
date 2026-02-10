@@ -3,8 +3,7 @@
 import { useProtectedRoute } from '@/hooks/useProtectedRoute'
 import { usePathname } from 'next/navigation'
 import SwrProvider from '@/utils/providers/SwrProvider'
-import { Sidebar } from '@/components/Sidebar'
-import Chatbot from '@/components/Chatbot'
+import { Sidebar } from "@/app/components/Sidebar"
 
 const PUBLIC_ROUTES = ['/auth/login', '/auth/register']
 
@@ -26,7 +25,6 @@ export default function ClientLayout({
         <SwrProvider>
             <Sidebar>
                 {children}
-                <Chatbot />
             </Sidebar>
         </SwrProvider>
     )

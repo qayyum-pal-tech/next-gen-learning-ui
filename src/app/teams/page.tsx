@@ -32,7 +32,7 @@ export default function TeamsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
             Teams
           </h1>
           <p className="text-gray-400 mt-2">Manage your teams and collaborations</p>
@@ -40,7 +40,7 @@ export default function TeamsPage() {
 
         <button
           onClick={() => setOpenModal(true)}
-          className="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-lg shadow-lg hover:from-blue-700 hover:to-cyan-600 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-xl cursor-pointer focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:outline-none"
+          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-lg shadow-lg hover:from-cyan-600 hover:to-blue-700 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-xl cursor-pointer focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 focus:outline-none"
         >
           <span className="flex items-center justify-center gap-2">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -52,37 +52,33 @@ export default function TeamsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-8 p-1 bg-gray-800 rounded-xl w-fit">
+      <div className="flex border-b border-gray-700 mb-8 overflow-x-auto">
         <button
           onClick={() => setActiveTab('created')}
-          className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 cursor-pointer ${
+          className={`px-8 py-4 font-bold transition-all duration-300 border-b-2 flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'created'
-              ? 'bg-gradient-to-r from-blue-700 to-cyan-700 text-white shadow-lg'
-              : 'text-gray-400 hover:text-white hover:bg-gray-700'
+              ? 'text-blue-400 border-blue-400 bg-blue-400/5'
+              : 'text-gray-500 border-transparent hover:text-gray-300'
           }`}
         >
-          <span className="flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-            </svg>
-            Created by Me
-          </span>
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+          </svg>
+          Created by Me
         </button>
 
         <button
           onClick={() => setActiveTab('joined')}
-          className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 cursor-pointer ${
+          className={`px-8 py-4 font-bold transition-all duration-300 border-b-2 flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'joined'
-              ? 'bg-gradient-to-r from-blue-700 to-cyan-700 text-white shadow-lg'
-              : 'text-gray-400 hover:text-white hover:bg-gray-700'
+              ? 'text-blue-400 border-blue-400 bg-blue-400/5'
+              : 'text-gray-500 border-transparent hover:text-gray-300'
           }`}
         >
-          <span className="flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-            </svg>
-            Joined Teams
-          </span>
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+          </svg>
+          Joined Teams
         </button>
       </div>
 

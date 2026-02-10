@@ -35,11 +35,29 @@ export default function Chatbot() {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, isOpen]);
 
-    const sendMessage = async () => {
-        if (!input.trim() || loading) return;
+    // Listen for external open requests
+    useEffect(() => {
+        const handleOpenChatbot = (event: CustomEvent<string>) => {
+            setIsOpen(true);
+            if (event.detail) {
+                const message = `Explain this context: "${event.detail}"`;
+                sendMessage(message);
+            }
+        };
 
-        const userMessage = input.trim();
-        setInput("");
+        window.addEventListener("openChatbotWithQuery" as any, handleOpenChatbot as any);
+        return () => {
+            window.removeEventListener("openChatbotWithQuery" as any, handleOpenChatbot as any);
+        };
+    }, []);
+
+    const sendMessage = async (messageOverride?: string) => {
+        const messageToSend = messageOverride || input;
+        
+        if (!messageToSend.trim() || loading) return;
+
+        const userMessage = messageToSend.trim();
+        if (!messageOverride) setInput(""); // Only clear input if not override
 
         // Add user message
         const userMsg: Message = {
@@ -223,7 +241,7 @@ export default function Chatbot() {
                                         disabled={loading}
                                     />
                                     <Button
-                                        onClick={sendMessage}
+                                        onClick={() => sendMessage()}
                                         disabled={loading || !input.trim()}
                                         size="icon"
                                         className="absolute right-1 top-1 h-9 w-9 bg-cyan-600 hover:bg-cyan-500 text-white rounded-md transition-all"

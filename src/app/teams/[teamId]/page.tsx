@@ -342,8 +342,9 @@ export default function TeamDetailsPage() {
                 onBack={() => setSelectedRoadmapId(null)}
               />
             ) : (
-              <TeamSharedRoadmaps
+            <TeamSharedRoadmaps
                 teamId={team._id}
+                currentUserId={currentUser?._id}
                 onSelect={(id) => setSelectedRoadmapId(id)}
               />
             )}

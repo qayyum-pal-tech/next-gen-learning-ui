@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { AssessmentType } from '@/components/QuizLandingPage';
+import { AssessmentType } from '@/app/components/QuizLandingPage';
 
 interface QuizConfig {
   pathId: string;

@@ -204,7 +204,7 @@ export default function SubtopicPage() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-gray-100">
             <Shell>
-                <div className="max-w-6xl mx-auto px-4 py-8">
+                <div className="max-w-6xl mx-auto px-4 py-8 relative">
                     {/* Nav */}
                     <div className="flex items-center justify-between mb-6">
                         <button
@@ -231,6 +231,7 @@ export default function SubtopicPage() {
                             isRegenerating={isRegenerating}
                             isCompleted={subtopic.isCompleted}
                             onToggleComplete={handleToggleComplete}
+                            version={roadmap.version}
                         />
                     )}
 

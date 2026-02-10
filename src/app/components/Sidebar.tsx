@@ -1,10 +1,13 @@
-'use client'
 
+
+'use client'
+ 
 import { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { LogOut, LayoutDashboard, Rocket, Users, Clock, Shield, Sparkles } from 'lucide-react'
 import { useAuthStore } from '@/store/auth.store'
-
+import Chatbot from './Chatbot'
+ 
 const navigation = [
     {
         name: 'Dashboard',
@@ -13,7 +16,7 @@ const navigation = [
     },
     {
         name: 'Learning',
-        path: '/roadmaps',
+        path: '/roadmap',
         icon: Rocket,
     },
     {
@@ -33,7 +36,7 @@ const navigation = [
         icon: Shield,
     },
 ]
-
+ 
 export function Sidebar({ children }: { children: React.ReactNode }) {
     const [sidebarExpanded, setSidebarExpanded] = useState(false)
     const user = useAuthStore((s) => s.user);
@@ -41,12 +44,12 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
     const router = useRouter()
     const logout = useAuthStore((s) => s.logout);
-
+ 
     const handleLogout = () => {
         console.log('Logging out...')
         logout();
     }
-
+ 
     return (
         <div className="flex min-h-screen bg-[#050510] font-sans text-white">
             {/* Background Ambience (Global for the layout) */}
@@ -54,7 +57,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                 <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-900/10 blur-[120px] rounded-full mix-blend-screen" />
                 <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-cyan-900/10 blur-[120px] rounded-full mix-blend-screen" />
             </div>
-
+ 
             {/* Sidebar */}
             <div
                 className={`sticky top-0 z-50 flex flex-col h-screen border-r border-white/10 bg-[#050510]/80 backdrop-blur-xl transition-[width] duration-300 ease-in-out ${sidebarExpanded ? 'w-64' : 'w-20'
@@ -74,7 +77,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                         )}
                     </div>
                 </div>
-
+ 
                 {/* Navigation */}
                 <nav className="flex-1 px-4 py-8 space-y-2">
                     {navigation
@@ -104,7 +107,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                             )
                         })}
                 </nav>
-
+ 
                 {/* User Profile & Logout Section */}
                 <div className="border-t border-white/10 p-4 space-y-3">
                     {/* User Profile */}
@@ -122,7 +125,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                             </div>
                         </div>
                     )}
-
+ 
                     {/* Logout Button */}
                     <button
                         onClick={handleLogout}
@@ -138,13 +141,14 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                     </button>
                 </div>
             </div>
-
+ 
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col min-w-0 relative z-10">
                 {/* Main Content */}
                 <main className="flex-1 overflow-auto bg-[#050510]">
                     {children}
                 </main>
+                {!pathname.startsWith('/quiz') && <Chatbot />}
             </div>
         </div>
     )

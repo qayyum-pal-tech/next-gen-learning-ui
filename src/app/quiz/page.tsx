@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useQuiz } from "@/context/QuizContext";
-import QuizLanding from "@/components/QuizLandingPage";
+import QuizLanding from "@/app/components/QuizLandingPage";
 
 export default function QuizStartPage() {
   const searchParams = useSearchParams();

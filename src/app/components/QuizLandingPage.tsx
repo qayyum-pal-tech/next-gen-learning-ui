@@ -32,11 +32,8 @@ export default function QuizLanding({
   const [isHoveringStart, setIsHoveringStart] = useState(false);
   const [isHoveringHome, setIsHoveringHome] = useState(false);
 
-  const displayTitle = courseTitle || categoryTitle || "Your Topic";
-  
-  const backendCategoryTitle = categoryTitle || courseTitle || "General";
+  const catTitle = assessmentType === 'SKILL_CHECK' ? categoryTitle : courseTitle;
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const handleStartQuiz = async () => {
     try {
@@ -50,8 +47,8 @@ export default function QuizLanding({
         userId,
         assessmentType,
         pathId,
-        categoryId: backendCategoryTitle.toLowerCase().replace(/\s+/g, '-'),
-        categoryTitle: backendCategoryTitle,
+        categoryId: catTitle?.toLowerCase().replace(/\s+/g, '-'),
+        categoryTitle: catTitle,
       };
 
       if (stepId) payload.stepId = stepId;
@@ -116,7 +113,7 @@ export default function QuizLanding({
                 
                 <div className="flex flex-col gap-0.5 md:gap-1">
                   <span className="text-xl md:text-3xl font-bold text-slate-200">
-                    {displayTitle}
+                    {catTitle}
                   </span>
                   {assessmentType === 'SKILL_CHECK' && subtopicTitle && (
                     <div className="flex items-center gap-2 text-slate-400 text-sm md:text-lg">
@@ -179,7 +176,7 @@ export default function QuizLanding({
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 md:gap-4">
+            {/* <div className="grid grid-cols-3 gap-3 md:gap-4">
               <div className="bg-slate-900/40 backdrop-blur-md p-3 md:p-4 rounded-xl border border-white/5 shadow-lg group hover:border-blue-500/30 transition-colors">
                 <div className="flex items-center gap-2 mb-1 md:mb-2">
                   <Clock className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-400" />
@@ -193,7 +190,9 @@ export default function QuizLanding({
                   <Brain className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-400" />
                   <span className="text-[10px] md:text-xs font-medium text-slate-500 uppercase tracking-wider">Items</span>
                 </div>
-                <p className="text-sm md:text-lg font-bold text-white">10</p>
+                <p className="text-sm md:text-lg font-bold text-white">
+                  {assessmentType === 'SKILL_CHECK' ? '5-10' : '10-15'}
+                </p>
               </div>
               
               <div className="bg-slate-900/40 backdrop-blur-md p-3 md:p-4 rounded-xl border border-white/5 shadow-lg group hover:border-blue-500/30 transition-colors">
@@ -205,7 +204,7 @@ export default function QuizLanding({
                   {assessmentType === 'SKILL_CHECK' ? 'Focused' : 'Adaptive'}
                 </p>
               </div>
-            </div>
+            </div> */}
 
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-2 md:pt-4">
               <button
@@ -270,7 +269,7 @@ export default function QuizLanding({
                           <div class="text-center px-4">
                             <h4 class="text-white font-bold text-lg md:text-xl mb-2">Ready?</h4>
                             <p class="text-slate-400 max-w-[200px] mx-auto text-xs leading-relaxed">
-                              Get an adaptive path tailored for <span class="text-blue-400 font-semibold">${displayTitle}</span>
+                              Get an adaptive path tailored for <span class="text-blue-400 font-semibold">${catTitle}</span>
                             </p>
                           </div>
                         </div>

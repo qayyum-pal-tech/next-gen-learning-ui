@@ -161,7 +161,7 @@ export default function RoadmapPage({
             style={{ height: '140px' }} />
 
           <div className="relative text-center pointer-events-auto px-4">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-cyan-300 via-white to-purple-300 bg-clip-text text-transparent leading-tight mx-auto max-w-3xl break-words">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-cyan-300 via-white to-purple-300 bg-clip-text text-transparent leading-tight mx-auto max-w-3xl break-words">
               {roadmap.subject.toUpperCase()}
             </h1>
 
