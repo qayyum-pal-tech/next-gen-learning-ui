@@ -46,7 +46,6 @@ export default function QuizAssessmentModal({
         <div
           className={`relative w-full max-w-md ${themeClasses.bg} rounded-3xl border ${themeClasses.border} ${themeClasses.shadow} overflow-hidden modal-animate-in`}
         >
-          {/* Decorative Elements */}
           <div className="absolute -top-10 -right-10 h-32 w-32 bg-blue-600/10 rounded-full blur-3xl" />
           <div className="absolute -bottom-10 -left-10 h-32 w-32 bg-purple-600/10 rounded-full blur-3xl" />
 

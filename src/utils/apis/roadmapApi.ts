@@ -66,7 +66,6 @@ export async function markSubtopicCompleted(
   return res.data;
 }
 
-/* ─── GET /roadmaps/team/:teamId ─── */
 export async function fetchTeamRoadmaps(teamId: string, userId?: string): Promise<any[]> {
   const res = await apiClient.get<any[]>(`/roadmaps/team/${teamId}`, {
     params: { userId },
@@ -74,7 +73,6 @@ export async function fetchTeamRoadmaps(teamId: string, userId?: string): Promis
   return res.data;
 }
 
-/* ─── GET /roadmaps/team/:teamId/roadmap/:roadmapId/progress ─── */
 export async function fetchTeamRoadmapProgress(
   teamId: string,
   roadmapId: string
@@ -85,7 +83,6 @@ export async function fetchTeamRoadmapProgress(
   return res.data;
 }
 
-/* ─── POST /learning-logs ─── */
 export async function postLearningLog(data: {
   roadmapId: string;
   topicTitle: string;
@@ -97,7 +94,6 @@ export async function postLearningLog(data: {
   return res.data;
 }
 
-/* ─── GET /admin/stats ─── */
 export async function fetchAdminStats(): Promise<{
   userCount: number;
   roadmapCount: number;
@@ -108,13 +104,11 @@ export async function fetchAdminStats(): Promise<{
   return res.data;
 }
 
-/* ─── GET /admin/logs ─── */
 export async function fetchAdminLogs(): Promise<any[]> {
   const res = await apiClient.get('/admin/logs');
   return res.data;
 }
 
-/* ─── PATCH /roadmaps/:id/acceptance ─── */
 export async function updateRoadmapStatus(
   id: string,
   userId: string,

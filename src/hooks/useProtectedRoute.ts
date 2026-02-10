@@ -41,7 +41,6 @@ export const useProtectedRoute = () => {
       return;
     }
 
-    // OPTIONAL: prevent logged-in users from seeing login/register
     if (isAuthenticated && isPublic) {
       router.replace('/dashboard');
     }

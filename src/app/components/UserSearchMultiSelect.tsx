@@ -18,7 +18,6 @@ export default function UserSearchMultiSelect({
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // fetch users
   useEffect(() => {
     if (!query.trim()) {
       setResults([]);
@@ -38,7 +37,6 @@ export default function UserSearchMultiSelect({
     fetch();
   }, [query, selectedUsers]);
 
-  // close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -61,7 +59,6 @@ export default function UserSearchMultiSelect({
 
   return (
     <div ref={ref} className="relative space-y-2">
-      {/* Selected chips */}
       <div className="flex flex-wrap gap-2">
         {selectedUsers.map((user) => (
           <span
@@ -76,7 +73,6 @@ export default function UserSearchMultiSelect({
         ))}
       </div>
 
-      {/* Input */}
       <input
         value={query}
         onChange={(e) => {
@@ -87,7 +83,6 @@ export default function UserSearchMultiSelect({
         className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
       />
 
-      {/* Dropdown */}
       {open && results.length > 0 && (
         <div className="absolute z-50 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-white/10 bg-[#050510] shadow-xl">
           {results.map((user) => (

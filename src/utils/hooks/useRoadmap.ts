@@ -1,22 +1,5 @@
 "use client";
 
-/**
- * useRoadmap.ts
- *
- * Fetches a single roadmap and exposes mutation helpers that:
- *   1. Optimistically update the SWR cache  (instant UI feedback)
- *   2. Fire the real PATCH to your NestJS backend
- *   3. Revalidate from the server response   (source of truth wins)
- *
- * Maps to:
- *   GET    /roadmaps/:id?userId=:userId
- *   PATCH  /roadmaps/:id/topics/:topicOrder?userId=:userId
- *   PATCH  /roadmaps/:id/topics/:topicOrder/subtopics/:subtopicOrder?userId=:userId
- *
- * Usage:
- *   const { roadmap, isLoading, error, markSubtopicDone, markTopicDone } =
- *     useRoadmap(roadmapId, userId);
- */
 
 import useSWR from "swr";
 import { useCallback } from "react";

@@ -8,7 +8,6 @@ export default function QuizStartPage() {
   const searchParams = useSearchParams();
   const { quizConfig } = useQuiz();
 
-  // Use context config if available, otherwise fall back to query params
   const pathId = quizConfig?.pathId || searchParams.get("pathId") || "learning-path-default";
   const userId = quizConfig?.userId || searchParams.get("userId") || "user123";
   const assessmentType = quizConfig?.assessmentType || "PRE_ASSESSMENT";

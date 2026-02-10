@@ -9,7 +9,7 @@ import {
   Calendar,
   Brain
 } from "lucide-react";
-import { QuizPreviewData, QuizRecord } from "@/lib/types";
+import { QuizPreviewData } from "@/lib/types";
 
 import { useSearchParams } from "next/navigation";
 import { useQuiz } from "@/context/QuizContext";
@@ -129,12 +129,10 @@ export default function QuizPreviewPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 relative overflow-hidden flex flex-col selection:bg-blue-500/30">
-      {/* Background Layer */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black" />
       <div className="absolute top-0 right-0 h-[500px] w-[500px] bg-blue-600/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
       <div className="absolute bottom-0 left-0 h-[500px] w-[500px] bg-purple-600/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4 pointer-events-none" />
 
-      {/* Premium Header */}
       <header className="relative z-20 bg-slate-900/60 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-6">
@@ -169,11 +167,9 @@ export default function QuizPreviewPage() {
         </div>
       </header>
 
-      {/* Main Content: Two-Column Dashboard */}
       <main className="flex-1 relative z-10 w-full overflow-hidden">
         <div className="max-w-7xl mx-auto h-full px-6 py-8 flex flex-col lg:flex-row gap-8">
           
-          {/* Left Column: Interactive Review */}
           <div className="flex-1 min-h-0 flex flex-col">
             <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
               <Question
@@ -199,10 +195,8 @@ export default function QuizPreviewPage() {
             </div>
           </div>
 
-          {/* Right Column: Insights & Navigation */}
           <aside className="lg:w-80 space-y-6 flex flex-col">
             
-            {/* Quick Stats Card */}
             <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-5 space-y-4 shadow-xl">
               <div className="flex items-center gap-2 text-blue-400">
                 <Brain className="w-4 h-4" />
@@ -238,7 +232,6 @@ export default function QuizPreviewPage() {
               </div>
             </div>
 
-            {/* Questions Navigation Matrix */}
             <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-5 flex-1 flex flex-col shadow-xl">
               <div className="flex items-center gap-2 text-slate-400 mb-5">
                 <BarChart3 className="w-4 h-4" />

@@ -33,7 +33,6 @@ export default function HomePage() {
   const { user } = useAuthStore();
   const USER_ID = user?._id || user?.id;
 
-  // Debounce logic
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (topic.trim().length > 1) {
@@ -62,7 +61,7 @@ export default function HomePage() {
         setSuggestions([]);
         setShowSuggestions(false);
       }
-    }, 300); // 300ms delay
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [topic]);
@@ -70,37 +69,31 @@ export default function HomePage() {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
-  // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [courseTitle, setCourseTitle] = useState('');
   const [modalType, setModalType] = useState<'pathCreation' | 'quizAssessment'>('pathCreation');
   const [customizationData, setCustomizationData] = useState<any>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // Open modal for topic cards or search
   const openModal = (title: string) => {
-    // Add minute visible delay for smoother user experience
     setTimeout(() => {
       setIsModalOpen(true);
       setCourseTitle(title);
       setModalType('pathCreation');
-    }, 500); // 500ms delay
+    }, 500);
   };
 
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (topic.trim()) {
       setIsSubmitted(true);
 
-      // Open modal with the entered topic
       openModal(topic);
 
       setTimeout(() => setIsSubmitted(false), 3000);
     }
   };
 
-  // Handle topic card click
   const handleTopicCardClick = (title: string) => {
     openModal(title);
   };
@@ -198,13 +191,11 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 relative overflow-hidden">
-      {/* Decorative Elements */}
       <div className="absolute top-20 left-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-float"></div>
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-float-delay"></div>
       <div className="absolute top-1/2 left-1/4 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl animate-float-reverse"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative z-10">
-        {/* Header */}
         <header className="text-center mb-20">
           <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-700 rounded-full mb-6 animate-fade-in-up">
             <Sparkles className="w-4 h-4 text-white mr-2" />
@@ -220,7 +211,6 @@ export default function HomePage() {
           </p>
         </header>
 
-        {/* Search Section */}
         <section className="max-w-3xl mx-auto mb-24 animate-fade-in-up animation-delay-300">
           <div className="relative">
             <form
@@ -252,7 +242,6 @@ export default function HomePage() {
                     }}
                     onBlur={() => {
                       setIsFocused(false);
-                      // Delay hiding to allow click event on suggestion
                       setTimeout(() => setShowSuggestions(false), 200);
                     }}
                     placeholder="What would you like to learn today?"
@@ -278,7 +267,6 @@ export default function HomePage() {
               </div>
             </form>
 
-            {/* Suggestions Dropdown - Moved outside form */}
             {showSuggestions && (isLoadingSuggestions || suggestions.length > 0) && (
               <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800 backdrop-blur-xl border border-gray-700 rounded-2xl shadow-2xl overflow-hidden z-[100]">
                 {isLoadingSuggestions ? (
@@ -293,7 +281,6 @@ export default function HomePage() {
                         key={index}
                         className="w-full text-left px-6 py-3 text-gray-300 hover:bg-gray-700 transition-colors flex items-center gap-3 group cursor-pointer relative"
                         onMouseDown={(e) => {
-                          // Only trigger modal if not clicking the arrow button
                           if (!(e.target as HTMLElement).closest('.arrow-button')) {
                             e.preventDefault();
                             setTimeout(() => {
@@ -307,7 +294,6 @@ export default function HomePage() {
                         </svg>
                         <span className="font-medium flex-1">{suggestion}</span>
 
-                        {/* Arrow button to fill input */}
                         <button
                           type="button"
                           className="arrow-button p-1.5 rounded-lg hover:bg-gray-600 transition-colors opacity-0 group-hover:opacity-100"
@@ -343,7 +329,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Features Section */}
         <section className="mb-20 animate-fade-in-up animation-delay-400">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <div className="bg-gradient-to-br from-blue-900/70 to-indigo-900/70 backdrop-blur-sm rounded-2xl p-6 text-center border border-blue-800/50 hover:border-blue-600 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/20">
@@ -378,7 +363,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Topic Categories */}
         <section aria-labelledby="popular-topics" className="animate-fade-in-up animation-delay-500">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-white mb-4">Popular Learning Paths</h2>
@@ -408,7 +392,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* CTA Section */}
         <section className="max-w-4xl mx-auto mt-32 text-center animate-fade-in-up animation-delay-600">
           <div className="bg-gradient-to-r from-indigo-900/80 to-purple-900/80 backdrop-blur-sm rounded-3xl p-12 border border-indigo-800/50 shadow-2xl">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl mb-6 mx-auto shadow-2xl">
@@ -429,7 +412,6 @@ export default function HomePage() {
         </section>
       </div>
 
-      {/* Modals */}
       <PathCreationModal
         courseTitle={courseTitle}
         isOpen={isModalOpen && modalType === 'pathCreation'}
@@ -443,14 +425,13 @@ export default function HomePage() {
         isOpen={isModalOpen && modalType === 'quizAssessment'}
         onClose={() => setIsModalOpen(false)}
         onTakeQuiz={() => {
-          // Use context instead of query params
           console.log("quiz starting",courseTitle,USER_ID)
           setQuizConfig({
             pathId: 'learning-path-default',
             userId: USER_ID,
             assessmentType: 'PRE_ASSESSMENT',
             courseTitle: courseTitle,
-            customizationData: customizationData, // Pass customization data
+            customizationData: customizationData,
           });
           router.push('/quiz');
           setIsModalOpen(false);

@@ -40,7 +40,6 @@ export default function QuizPage() {
 
   const hasInitialized = useRef(false);
 
-  // Fetch quiz details and start/resume
   useEffect(() => {
     const startQuiz = async () => {
       if (!quizId || hasInitialized.current) return;
@@ -54,7 +53,6 @@ export default function QuizPage() {
           return;
         }
 
-        // Get quiz details first
         const detailsRes = await fetch(`${API_URL}/quiz/getdetails`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -69,7 +67,6 @@ export default function QuizPage() {
           return;
         }
 
-        // Resume or start
         const endpoint = details.data.status === "IN_PROGRESS" ? "resume" : "start";
         const res = await fetch(`${API_URL}/quiz/${endpoint}`, {
           method: "POST",
@@ -90,7 +87,6 @@ export default function QuizPage() {
 
         setCurrentQuestion(data.question);
         
-        // Use questions count from details or start response, defaulting to whatever the backend sent if not explicit
         const totalQuestions = details.data.questionsCount || data.questionsCount || data.totalQuestions || (data.question ? 5 : 0);
         
         setProgress({
@@ -153,10 +149,8 @@ export default function QuizPage() {
   if (isLoading) {
     return (
       <div className="h-screen bg-slate-950 flex items-center justify-center relative overflow-hidden">
-        {/* Background Layer matching main page */}
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black opacity-100" />
         
-        {/* Decorative Background Elements */}
         <div className="absolute top-0 right-0 h-[400px] w-[400px] bg-blue-600/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
         <div className="absolute bottom-0 left-0 h-[400px] w-[400px] bg-purple-600/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4 pointer-events-none" />
 
@@ -169,10 +163,8 @@ export default function QuizPage() {
 
   return (
     <div className="h-screen bg-slate-950 text-slate-100 relative overflow-hidden flex flex-col">
-      {/* Background Layer matching Landing Page */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black opacity-100" />
       
-      {/* Decorative Background Elements */}
       <div className="absolute top-0 right-0 h-[400px] w-[400px] bg-blue-600/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
       <div className="absolute bottom-0 left-0 h-[400px] w-[400px] bg-purple-600/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4 pointer-events-none" />
 

@@ -68,7 +68,6 @@ const generateColors = (count: number) => {
 }
 
 export default function AnalyticsPage() {
-  /* ── dependencies ── */
   const { user } = useAuthStore();
   const USER_ID = user?._id || user?.id;
 
@@ -212,12 +211,10 @@ export default function AnalyticsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-gray-100 p-4 sm:p-6 lg:p-8 rounded">
-      {/* Header */}
       <div className="max-w-7xl mx-auto mb-8 relative z-20">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-              Analytics
             </h1>
             <p className="text-gray-400 mt-2">Track your learning progress and performance</p>
           </div>
@@ -232,9 +229,7 @@ export default function AnalyticsPage() {
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Stats Grid - Compact */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {/* Learning Overview */}
           <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-5 border border-gray-700/50">
             <h3 className="text-base font-semibold text-gray-100 mb-4">Overview</h3>
             <div className="space-y-3">
@@ -291,7 +286,6 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          {/* Domain Analytics */}
           <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-5 border border-gray-700/50">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-semibold text-gray-100">Domains</h3>
@@ -345,7 +339,6 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          {/* Active Paths - Independent Height */}
           <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-5 border border-gray-700/50 lg:row-span-2">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-semibold text-gray-100">Active Paths</h3>
@@ -402,7 +395,6 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          {/* Tabbed Content */}
           <div className="lg:col-span-2 bg-gray-800/40 backdrop-blur-sm rounded-xl border border-gray-700/50 overflow-hidden">
             <div className="border-b border-gray-700/50">
               <div className="flex">

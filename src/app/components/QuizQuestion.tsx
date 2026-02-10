@@ -70,7 +70,6 @@ export default function Question({
 
   return (
     <div className="w-full max-w-7xl mx-auto bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden shadow-2xl flex flex-col transition-all duration-300 max-h-[88vh]">
-      {/* Header - Reduced padding */}
       <div className="bg-white/5 border-b border-white/5 px-5 md:px-6 py-3">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2.5">
@@ -143,7 +142,6 @@ export default function Question({
         )}
       </div>
 
-      {/* Question Body - Reduced padding and spacing, handled scroll better */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <div className="relative">
           <div className="absolute -left-4 top-0 w-0.5 h-full bg-gradient-to-b from-blue-500/50 to-transparent rounded-full opacity-50" />
@@ -152,9 +150,7 @@ export default function Question({
           </h2>
         </div>
 
-        {/* Actionable Content */}
         <div className="space-y-3">
-          {/* Multiple Choice - Reduced inner padding */}
           {questionType === "multiple_choice" && options.length > 0 && (
             <div className="grid gap-2.5">
               {options.map((option, index) => (
@@ -213,7 +209,6 @@ export default function Question({
             </div>
           )}
 
-          {/* Descriptive or Scenario - Reduced height */}
           {(questionType === "descriptive" || questionType === "scenario") && (
             <div className="group relative space-y-4">
               <div className="relative">
@@ -246,7 +241,6 @@ export default function Question({
           )}
         </div>
 
-        {/* AI Explanation Section */}
         {mode === 'preview' && explanation && (
           <div className="mt-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-5 relative overflow-hidden group/feedback">
@@ -270,7 +264,6 @@ export default function Question({
         )}
       </div>
 
-      {/* Footer - Reduced padding */}
       {mode === "quiz" && onNext && (
         <div className="bg-slate-900/60 backdrop-blur-md border-t border-white/5 px-6 py-4 flex justify-between items-center gap-4 mt-auto">
           <p className="hidden md:block text-[10px] text-slate-300 font-semibold uppercase tracking-wider">

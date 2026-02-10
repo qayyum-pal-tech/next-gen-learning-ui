@@ -18,7 +18,6 @@ export default function LearningLogModal({ isOpen, onClose, roadmapId, topicTitl
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
 
-    // Sync minutes with suggested value when modal opens
     useEffect(() => {
         if (isOpen) {
             setMinutes(suggestedMinutes || 5);
@@ -123,10 +122,13 @@ export default function LearningLogModal({ isOpen, onClose, roadmapId, topicTitl
                         ) : (
                             <>
                                 <Send className="w-5 h-5" />
-                                Submit Entry
+                                Submit Entry (Suggested: {suggestedMinutes}m)
                             </>
                         )}
                     </button>
+                    <p className="text-center text-[10px] text-gray-500 font-mono italic">
+                        Real-time tracking is active. The system rounds up to the nearest minute.
+                    </p>
                 </form>
             </div>
         </div>

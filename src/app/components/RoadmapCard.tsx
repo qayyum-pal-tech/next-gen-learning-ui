@@ -26,7 +26,6 @@ interface RoadmapCardProps {
 }
 
 export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
-  // console.log("roadmap",roadmap);
   const router = useRouter()
   const [showMenu, setShowMenu] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
@@ -39,8 +38,6 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
 
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-
-  console.log("currentuser", currentUser);
 
   useEffect(() => {
     const load = async () => {
@@ -57,7 +54,6 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
     load()
   }, [])
 
-  console.log('teams', teams)
 
   const handleMenuClick = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -97,7 +93,6 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
     setShowShareModal(false)
     setShowMenu(false)
 
-    // reset modal state
     setActiveTab('team')
     setSelectedTeamId(null)
     setSelectedUsers([])
@@ -123,10 +118,8 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
           }`}
       >
         <div className="absolute inset-0 overflow-visible rounded-3xl border border-white/10 bg-[#050510]/80 backdrop-blur-xl transition-all duration-500 group-hover:border-cyan-500/50 group-hover:shadow-[0_0_50px_rgba(6,182,212,0.15)]">
-          {/* Card Background Gradient */}
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-cyan-900/10 via-transparent to-purple-900/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
-          {/* Status Badge - Center */}
           <div className="absolute top-4 left-1/2 z-10 -translate-x-1/2">
             <div
               className={`rounded-full border px-3 py-1 text-[10px] font-bold whitespace-nowrap tracking-wider ${isDenied
@@ -152,7 +145,6 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
             </div>
           </div>
 
-          {/* Kebab Menu Button - Right */}
           {(!isShared || isSharedWithTeam) && (
             <div className="absolute top-4 right-4 z-20">
               <button
@@ -162,7 +154,6 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
                 <MoreVertical className="h-4 w-4 cursor-pointer text-gray-400 hover:text-white" />
               </button>
 
-              {/* Dropdown Menu */}
               {showMenu && (
                 <div className="absolute top-10 right-0 w-40 overflow-hidden rounded-lg border border-white/10 bg-[#0a0a1a]/95 shadow-xl backdrop-blur-xl">
                   {(isOwned || (isSharedWithTeam && isAccepted)) && (
@@ -202,12 +193,10 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
           )}
 
           <div className="relative z-10 flex h-full flex-col p-6">
-            {/* Icon/Image Placeholder */}
             <div className="mt-8 mb-6 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/5 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 transition-transform duration-500 group-hover:scale-110 group-hover:border-cyan-500/30">
               <Rocket className="h-6 w-6 text-cyan-400" />
             </div>
 
-            {/* Title & Stats */}
             <div className="mb-auto space-y-4">
               <h3 className="line-clamp-2 text-2xl font-bold text-white transition-colors group-hover:text-cyan-300">
                 {roadmap.subject}
@@ -225,7 +214,6 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
               </div>
             </div>
 
-            {/* Progress Section */}
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Progress</span>
@@ -241,7 +229,6 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
               </div>
             </div>
 
-            {/* Action Footer */}
             <div className="mt-6 flex items-center justify-between border-t border-white/5 pt-6 text-sm transition-colors group-hover:border-cyan-500/20">
               <span className="text-gray-400 transition-colors group-hover:text-white">
                 Continue Journey
@@ -254,7 +241,6 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
         </div>
       </div>
 
-      {/* Share Modal */}
       {showShareModal && (
         <div
           onClick={closeModal}
@@ -264,7 +250,6 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
             onClick={handleModalClick}
             className="w-full max-w-md rounded-2xl border border-white/10 bg-[#0a0a1a] shadow-2xl"
           >
-            {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-white/10 p-6">
               <h2 className="text-xl font-bold text-white">Share Roadmap</h2>
               <button
@@ -275,7 +260,6 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
               </button>
             </div>
 
-            {/* Tabs */}
             <div className="flex border-b border-white/10">
               <button
                 onClick={() => setActiveTab('team')}
@@ -309,7 +293,6 @@ export default function RoadmapCard({ roadmap }: RoadmapCardProps) {
               </button>
             </div>
 
-            {/* Tab Content */}
             <div className="p-6">
               {activeTab === 'team' ? (
                 <div className="space-y-4">

@@ -52,13 +52,10 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
  
     return (
         <div className="flex min-h-screen bg-[#050510] font-sans text-white">
-            {/* Background Ambience (Global for the layout) */}
             <div className="fixed inset-0 pointer-events-none z-0">
                 <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-900/10 blur-[120px] rounded-full mix-blend-screen" />
                 <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-cyan-900/10 blur-[120px] rounded-full mix-blend-screen" />
             </div>
- 
-            {/* Sidebar */}
             <div
                 className={`sticky top-0 z-50 flex flex-col h-screen border-r border-white/10 bg-[#050510]/80 backdrop-blur-xl transition-[width] duration-300 ease-in-out ${sidebarExpanded ? 'w-64' : 'w-20'
                     }`}
@@ -66,7 +63,6 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                 onMouseEnter={() => setSidebarExpanded(true)}
                 onMouseLeave={() => setSidebarExpanded(false)}
             >
-                {/* Logo Section */}
                 <div className="flex h-20 items-center justify-center border-b border-white/10">
                     <div className="flex items-center gap-2 text-cyan-400">
                         <Sparkles className={`w-8 h-8 flex-shrink-0 ${sidebarExpanded ? 'animate-pulse' : ''}`} />
@@ -78,7 +74,6 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                     </div>
                 </div>
  
-                {/* Navigation */}
                 <nav className="flex-1 px-4 py-8 space-y-2">
                     {navigation
                         .filter(item => !item.adminOnly || userName === 'admin')
@@ -108,9 +103,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                         })}
                 </nav>
  
-                {/* User Profile & Logout Section */}
                 <div className="border-t border-white/10 p-4 space-y-3">
-                    {/* User Profile */}
                     {sidebarExpanded && (
                         <div className="bg-white/5 rounded-xl p-3 border border-white/10">
                             <div className="flex items-center gap-3">
@@ -126,7 +119,6 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                         </div>
                     )}
  
-                    {/* Logout Button */}
                     <button
                         onClick={handleLogout}
                         className={`flex items-center w-full p-3 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-white transition-colors duration-200 group cursor-pointer ${!sidebarExpanded && 'justify-center'
@@ -142,9 +134,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                 </div>
             </div>
  
-            {/* Main Content Area */}
             <div className="flex-1 flex flex-col min-w-0 relative z-10">
-                {/* Main Content */}
                 <main className="flex-1 overflow-auto bg-[#050510]">
                     {children}
                 </main>

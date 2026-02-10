@@ -30,12 +30,10 @@ export default function Chatbot() {
     const [loading, setLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // Auto-scroll to bottom
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, isOpen]);
 
-    // Listen for external open requests
     useEffect(() => {
         const handleOpenChatbot = (event: CustomEvent<string>) => {
             setIsOpen(true);
@@ -57,9 +55,8 @@ export default function Chatbot() {
         if (!messageToSend.trim() || loading) return;
 
         const userMessage = messageToSend.trim();
-        if (!messageOverride) setInput(""); // Only clear input if not override
+        if (!messageOverride) setInput(""); 
 
-        // Add user message
         const userMsg: Message = {
             id: messages.length + 1,
             text: userMessage,
@@ -133,10 +130,8 @@ export default function Chatbot() {
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         className="relative"
                     >
-                        {/* Glassmorphic Container */}
                         <div className="w-[380px] h-[600px] flex flex-col rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10 bg-[#050510]/95 backdrop-blur-xl">
 
-                            {/* Header */}
                             <div className="relative p-4 border-b border-white/10 bg-gradient-to-r from-cyan-900/20 to-purple-900/20">
                                 <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
                                 <div className="flex items-center justify-between relative z-10">
@@ -168,7 +163,6 @@ export default function Chatbot() {
                                 </div>
                             </div>
 
-                            {/* Chat Area */}
                             <div className="flex-1 relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/10 via-[#050510] to-[#050510]">
                                 <ScrollArea className="h-full px-4 py-4">
                                     <div className="space-y-4">
@@ -229,7 +223,6 @@ export default function Chatbot() {
                                 </ScrollArea>
                             </div>
 
-                            {/* Input Area */}
                             <div className="p-4 bg-[#050510]/80 border-t border-white/10 backdrop-blur-md">
                                 <div className="relative">
                                     <Input

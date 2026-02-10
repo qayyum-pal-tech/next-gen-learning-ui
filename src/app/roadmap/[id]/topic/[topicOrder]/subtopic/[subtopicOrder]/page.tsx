@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useRoadmap } from "@/utils/hooks/useRoadmap";
 import {
@@ -21,15 +21,12 @@ export default function SubtopicPage() {
     const router = useRouter();
     const { user } = useAuthStore();
     const USER_ID = user?._id || user?.id;
-    // Parse params
     const roadmapId = params?.id as string;
     const topicOrder = parseInt(params?.topicOrder as string);
     const subtopicOrder = parseInt(params?.subtopicOrder as string);
 
-    // 1. Fetch Basic Roadmap Data (for titles/context)
     const { roadmap, isLoading: isRoadmapLoading, markSubtopicDone } = useRoadmap(roadmapId, USER_ID);
 
-    // State
     const [content, setContent] = useState<SubtopicContentType | null>(null);
     const [status, setStatus] = useState<
         "idle" | "checking" | "generating" | "fetching" | "success" | "error"
@@ -39,17 +36,13 @@ export default function SubtopicPage() {
     const [isLogModalOpen, setIsLogModalOpen] = useState(false);
     const [trackedSeconds, setTrackedSeconds] = useState(0);
 
-    // Active Timer logic
     useEffect(() => {
         const interval = setInterval(() => {
-            if (document.hasFocus()) {
-                setTrackedSeconds(prev => prev + 1);
-            }
+            setTrackedSeconds(prev => prev + 1);
         }, 1000);
         return () => clearInterval(interval);
     }, []);
 
-    // Derived
     const topic = roadmap?.topics.find((t) => t.order === topicOrder);
     const subtopic = topic?.subtopics.find((s) => s.order === subtopicOrder);
 
@@ -62,11 +55,9 @@ export default function SubtopicPage() {
         }
     };
 
-    // 2. Main Logic: Check Exists -> Fetch or Generate
     useEffect(() => {
         if (!roadmap || !topic || !subtopic) return;
 
-        // Prevent re-running if already loading or finished
         if (status !== "idle") return;
 
         const init = async () => {
@@ -80,7 +71,6 @@ export default function SubtopicPage() {
                     setContent(data);
                     setStatus("success");
                 } else {
-                    // Generate
                     setStatus("generating");
                     const data = await generateContent({
                         roadmapId,
@@ -103,7 +93,6 @@ export default function SubtopicPage() {
         init();
     }, [roadmapId, topicOrder, subtopicOrder, !!roadmap, !!topic, !!subtopic, status]);
 
-    // Handlers
     const handleRegenerate = async (instructions?: string) => {
         if (!content || !topic || !subtopic) return;
         setIsRegenerating(true);
@@ -122,15 +111,12 @@ export default function SubtopicPage() {
             setContent(data);
         } catch (err) {
             console.error("Regenerate Error:", err);
-            // Optional: show toast
         } finally {
             setIsRegenerating(false);
         }
     };
 
-    /* ── Renders ── */
 
-    // 1. Loading Roadmap
     if (isRoadmapLoading || !roadmap) {
         return (
             <div className="min-h-screen bg-black flex items-center justify-center">
@@ -139,7 +125,6 @@ export default function SubtopicPage() {
         );
     }
 
-    // 2. Invalid Params
     if (!topic || !subtopic) {
         return (
             <div className="min-h-screen bg-black flex flex-col items-center justify-center text-white">
@@ -155,7 +140,6 @@ export default function SubtopicPage() {
         );
     }
 
-    // 3. Loading / Generating Content
     if (status === "generating" || status === "checking" || status === "fetching") {
         return (
             <div className="min-h-screen bg-black flex flex-col items-center justify-center text-white space-y-6">
@@ -177,7 +161,6 @@ export default function SubtopicPage() {
         );
     }
 
-    // 4. Error
     if (status === "error") {
         return (
             <div className="min-h-screen bg-black flex flex-col items-center justify-center text-white">
@@ -185,7 +168,7 @@ export default function SubtopicPage() {
                 <h1 className="text-xl font-bold mb-2">Something went wrong</h1>
                 <p className="text-gray-400 mb-6">{errorMsg}</p>
                 <button
-                    onClick={() => setStatus("idle")} // Retry
+                    onClick={() => setStatus("idle")}
                     className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition"
                 >
                     Try Again
@@ -200,12 +183,10 @@ export default function SubtopicPage() {
         );
     }
 
-    // 5. Success
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-gray-100">
             <Shell>
                 <div className="max-w-6xl mx-auto px-4 py-8 relative">
-                    {/* Nav */}
                     <div className="flex items-center justify-between mb-6">
                         <button
                             onClick={() => router.back()}
@@ -240,7 +221,7 @@ export default function SubtopicPage() {
                         onClose={() => setIsLogModalOpen(false)}
                         roadmapId={roadmapId}
                         topicTitle={subtopic.title}
-                        suggestedMinutes={Math.floor(trackedSeconds / 60) || 1}
+                        suggestedMinutes={Math.max(1, Math.ceil(trackedSeconds / 60))}
                     />
                 </div>
             </Shell>

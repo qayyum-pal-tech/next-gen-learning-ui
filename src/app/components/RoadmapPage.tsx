@@ -46,7 +46,6 @@ export default function RoadmapPage({
     const topic = safeRoadmap.topics.find(t => t.order === topicOrder);
     if (!topic) return;
 
-    // Set quiz configuration in context
     setQuizConfig({
       pathId: roadmapId,
       userId: userId || '',
@@ -55,11 +54,9 @@ export default function RoadmapPage({
       categoryTitle: topic.title,
     });
 
-    // Navigate to quiz page
     router.push('/quiz');
   };
 
-  /* star animation tick */
   useEffect(() => {
     const id = setInterval(() => setTick((t) => t + 1), 2000);
     return () => clearInterval(id);
@@ -76,14 +73,13 @@ export default function RoadmapPage({
     totalEstimatedDuration: "",
   };
 
-  // Node Calculation
-  const SPACING = 120; // Reduced spacing
-  const START_Y = 150; // Increased padding to account for header
-  const AMPLITUDE = 25; // How wide the zig-zag is (from center: 50 +/- 25)
+  const SPACING = 120;
+  const START_Y = 150;
+  const AMPLITUDE = 25;
 
   const nodes = safeRoadmap.topics.map((topic, index) => {
-    // Sinusoidal Zig-Zag
     const x = 50 + Math.sin(index * Math.PI / 1.5) * AMPLITUDE;
+
     return {
       topic,
       x,
@@ -93,7 +89,6 @@ export default function RoadmapPage({
 
   const totalHeight = START_Y + nodes.length * SPACING + 200;
 
-  /* ── loading ── */
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -105,7 +100,6 @@ export default function RoadmapPage({
     )
   }
 
-  /* ── error ── */
   if (error || !roadmap) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center text-white">
@@ -120,7 +114,6 @@ export default function RoadmapPage({
     );
   }
 
-  /* ── star field ── */
   const STARS = Array.from({ length: 150 }, (_, i) => ({
     x: (Math.sin(i * 132.5) * 0.5 + 0.5) * 100,
     y: (Math.cos(i * 41.3) * 0.5 + 0.5) * 100,
@@ -130,9 +123,7 @@ export default function RoadmapPage({
 
   return (
     <div className="min-h-screen bg-[#050510] relative overflow-hidden font-sans">
-      {/* Background Ambience */}
       <div className="fixed inset-0 pointer-events-none">
-        {/* Stars */}
         {STARS.map((star, i) => (
           <div
             key={i}
@@ -147,7 +138,6 @@ export default function RoadmapPage({
           />
         ))}
 
-        {/* Nebulas */}
         <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-900/20 blur-[120px] rounded-full mix-blend-screen" />
         <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-cyan-900/10 blur-[120px] rounded-full mix-blend-screen" />
       </div>
@@ -165,7 +155,6 @@ export default function RoadmapPage({
               {roadmap.subject.toUpperCase()}
             </h1>
 
-            {/* Optional: Progress indicator */}
             <div className="mt-3 flex items-center justify-center gap-2 text-cyan-400/80 text-sm">
               <Rocket className="w-4 h-4" />
               <span>{safeRoadmap.progressPercentage}% Complete</span>
@@ -173,16 +162,13 @@ export default function RoadmapPage({
           </div>
         </div>
 
-        {/* The Path */}
         <div className="absolute inset-0 top-[0px]">
-          {/* Offset logic is inside the path/node coords */}
           <RoadmapPath
             points={nodes.map(n => ({ x: n.x, y: n.y }))}
             height={totalHeight}
           />
         </div>
 
-        {/* Nodes */}
         <div className="absolute inset-0 top-[0px]">
           {nodes.map((node, i) => (
             <PlanetNode
@@ -199,7 +185,6 @@ export default function RoadmapPage({
         </div>
       </div>
 
-      {/* Side Drawer */}
       <SideDrawer
         topic={selectedTopic}
         isOpen={!!selectedTopic}
@@ -210,9 +195,8 @@ export default function RoadmapPage({
             if (onTakeQuiz) {
               onTakeQuiz(selectedTopic.order);
             } else {
-              // Default behavior if no prop passed: mark done immediately (simulated quiz pass)
               markTopicDone(selectedTopic.order, true);
-              setSelectedTopic(null); // Close drawer after action
+              setSelectedTopic(null);
             }
           }
         }}

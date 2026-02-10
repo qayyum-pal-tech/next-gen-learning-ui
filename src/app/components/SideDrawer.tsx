@@ -26,7 +26,6 @@ export default function SideDrawer({
         <AnimatePresence>
             {isOpen && topic && (
                 <>
-                    {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -35,7 +34,6 @@ export default function SideDrawer({
                         className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
                     />
 
-                    {/* Drawer Panel */}
                     <motion.div
                         initial={{ x: "100%" }}
                         animate={{ x: 0 }}
@@ -44,7 +42,6 @@ export default function SideDrawer({
                         className="fixed right-0 top-0 bottom-0 w-full md:w-[480px] bg-gray-900 border-l border-white/10 shadow-2xl z-50 overflow-y-auto"
                     >
                         <div className="p-6">
-                            {/* Header */}
                             <div className="flex items-start justify-between mb-8">
                                 <div>
                                     <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2 block">
@@ -63,7 +60,6 @@ export default function SideDrawer({
                                 </button>
                             </div>
 
-                            {/* Subtopic List */}
                             <div className="space-y-3">
                                 <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-4">
                                     Learning Modules
@@ -99,7 +95,6 @@ export default function SideDrawer({
                                 ))}
                             </div>
 
-                            {/* Quiz Section */}
                             <div className="mt-8 pt-8 border-t border-white/10">
                                 <button
                                     onClick={onTakeQuiz}

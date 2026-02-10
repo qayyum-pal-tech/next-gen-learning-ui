@@ -20,7 +20,6 @@ export default function LoginPage() {
   const handleLogin = async () => {
     setError('');
 
-    // Validation
     if (!email || !password) {
       setError('Please fill in all fields');
       return;
@@ -61,7 +60,6 @@ export default function LoginPage() {
   return (
     <div className="w-full max-w-md">
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-8 shadow-2xl">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-3xl font-bold text-transparent">
             Login
@@ -71,7 +69,6 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Error Alert */}
         {error && (
           <div className="mb-6 animate-in fade-in slide-in-from-top-1 rounded-lg border border-red-500/20 bg-red-500/10 p-4">
             <div className="flex items-start gap-3">
@@ -91,9 +88,7 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Form */}
         <div className="space-y-5">
-          {/* Email Field */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-300">
               Email
@@ -113,7 +108,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Password Field */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-300">
               Password
@@ -144,7 +138,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Submit Button */}
           <button
             onClick={handleLogin}
             disabled={loading}
@@ -161,7 +154,6 @@ export default function LoginPage() {
           </button>
         </div>
 
-        {/* Footer */}
         <p className="mt-6 text-center text-sm text-gray-400">
           Don't have an account?{' '}
           <span

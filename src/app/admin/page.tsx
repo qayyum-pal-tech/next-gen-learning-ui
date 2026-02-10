@@ -64,7 +64,6 @@ export default function AdminDashboard() {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-3xl font-bold text-white tracking-tight">Organization Oversight</h2>
@@ -115,16 +114,78 @@ export default function AdminDashboard() {
                     />
                     <StatCard
                         title="Time Invested"
-                        value={`${Math.round((stats?.totalLearningMinutes || 0) / 60)}h`}
+                        value={stats?.totalLearningMinutes >= 60 
+                            ? `${Math.floor(stats.totalLearningMinutes / 60)}h ${stats.totalLearningMinutes % 60}m`
+                            : `${stats?.totalLearningMinutes || 0}m`
+                        }
                         icon={<Clock className="w-6 h-6" />}
                         color="emerald"
                     />
 
-                    <div className="md:col-span-2 lg:col-span-4 bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-3xl p-8">
-                        <h3 className="text-xl font-bold text-white mb-6">Learning Activity Insight</h3>
-                        <div className="h-64 flex items-center justify-center text-gray-500 border-2 border-dashed border-gray-700 rounded-2xl">
-                            <p>Engagement Visualization Coming Soon</p>
+                    <div className="md:col-span-2 lg:col-span-4 bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-3xl p-8 relative overflow-hidden group/card shadow-2xl">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/2" />
+                        
+                        <div className="flex items-center justify-between mb-8 relative z-10">
+                            <div>
+                                <h3 className="text-xl font-bold text-white tracking-tight">Organization Pulse</h3>
+                                <p className="text-xs text-gray-500 mt-1 font-medium">Daily learning engagement across all cadets</p>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-blue-400 bg-blue-500/10 px-3 py-1.5 rounded-full border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+                                <BarChart3 className="w-3 h-3" />
+                                <span className="tracking-widest">7-DAY ANALYTICS</span>
+                            </div>
                         </div>
+                        
+                        {stats?.activityStats && stats.activityStats.some((d: any) => d.minutes > 0) ? (
+                            <div className="h-64 flex items-end justify-between gap-4 md:gap-8 px-4 relative z-10">
+                                {stats.activityStats.map((day: any, i: number) => {
+                                    const maxMinutes = Math.max(...stats.activityStats.map((d: any) => d.minutes), 60);
+                                    const height = (day.minutes / maxMinutes) * 100;
+                                    const isZero = day.minutes === 0;
+
+                                    return (
+                                        <div key={i} className="flex-1 flex flex-col items-center gap-4 group h-full">
+                                            <div className="relative w-full flex justify-center items-end h-full pt-10">
+                                                {!isZero ? (
+                                                    <div 
+                                                        className="w-full max-w-[42px] bg-gradient-to-t from-blue-600 via-cyan-500 to-cyan-300 rounded-t-xl transition-all duration-700 group-hover:from-blue-500 group-hover:to-cyan-200 shadow-[0_0_15px_rgba(6,182,212,0.15)] group-hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] group-hover:scale-x-110"
+                                                        style={{ height: `${Math.max(height, 3)}%` }}
+                                                    />
+                                                ) : (
+                                                    <div className="w-full max-w-[32px] h-[3px] bg-gray-800/50 rounded-full transition-colors group-hover:bg-gray-700" />
+                                                )}
+                                                
+                                                {!isZero && (
+                                                    <div className="absolute top-0 opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-y-4 group-hover:-translate-y-12 bg-gray-950/90 backdrop-blur-md text-white px-3 py-2 rounded-xl border border-white/10 whitespace-nowrap z-20 shadow-2xl pointer-events-none scale-90 group-hover:scale-100">
+                                                        <div className="flex flex-col items-center">
+                                                            <div className="flex items-center gap-1.5 mb-0.5">
+                                                                <Clock className="w-3 h-3 text-cyan-400" />
+                                                                <span className="text-xs font-black">{day.minutes}m</span>
+                                                            </div>
+                                                            <span className="text-[8px] text-gray-500 font-bold uppercase tracking-tighter">Engagement</span>
+                                                        </div>
+                                                        <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-gray-950/90" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="flex flex-col items-center gap-1">
+                                                <span className={`text-[10px] font-bold uppercase tracking-widest transition-all duration-300 ${isZero ? 'text-gray-700' : 'text-gray-500 group-hover:text-cyan-400 group-hover:scale-110'}`}>
+                                                    {day.label}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <div className="h-64 flex flex-col items-center justify-center text-center p-8 bg-gray-950/20 border-2 border-dashed border-gray-700/30 rounded-3xl relative z-10 animate-pulse">
+                                <div className="w-16 h-16 bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl flex items-center justify-center mb-4 shadow-inner border border-white/5">
+                                    <BarChart3 className="w-8 h-8 text-gray-700" />
+                                </div>
+                                <h4 className="text-gray-200 font-bold text-lg mb-1 tracking-tight">Insufficient Engagement Data</h4>
+                                <p className="text-gray-500 text-xs max-w-[240px] leading-relaxed">System is awaiting initial learning telemetry. Activity insights will populate automatically.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             ) : (

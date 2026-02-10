@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getToken } from './auth';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3003', // your NestJS backend
+  baseURL: 'http://localhost:3003',
 });
 
 api.interceptors.request.use((config: { headers: { Authorization: string; }; }) => {

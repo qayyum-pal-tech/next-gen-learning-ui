@@ -3,26 +3,18 @@
 import { motion } from "framer-motion";
 
 interface RoadmapPathProps {
-    points: { x: number; y: number }[]; // x in %, y in px
+    points: { x: number; y: number }[];
     height: number;
 }
 
 export default function RoadmapPath({ points, height }: RoadmapPathProps) {
     if (points.length < 2) return null;
-
-    // Build Bezier Path
-    // NOTE: X is 0-100, Y is 0-height. 
-    // We set viewBox to "0 0 100 height" so these map 1:1.
-
-    // Move to first point
     let pathD = `M ${points[0].x} ${points[0].y}`;
 
-    // Draw curves to subsequent points
     for (let i = 0; i < points.length - 1; i++) {
         const current = points[i];
         const next = points[i + 1];
 
-        // Control points for smooth S-curve
         const cp1x = current.x;
         const cp1y = current.y + (next.y - current.y) / 2;
         const cp2x = next.x;
@@ -46,7 +38,6 @@ export default function RoadmapPath({ points, height }: RoadmapPathProps) {
                 </linearGradient>
             </defs>
 
-            {/* Background Dim Line - High Visibility */}
             <path
                 d={pathD}
                 fill="none"
@@ -58,7 +49,6 @@ export default function RoadmapPath({ points, height }: RoadmapPathProps) {
                 vectorEffect="non-scaling-stroke"
             />
 
-            {/* Animated Glowing Line */}
             <motion.path
                 d={pathD}
                 fill="none"

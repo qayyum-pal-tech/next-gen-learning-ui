@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeHighlight from "rehype-highlight";
-// import "highlight.js/styles/atom-one-dark.css"; // Import highlight styles
+import "highlight.js/styles/atom-one-dark.css";
 import { SubtopicContent as SubtopicContentType } from "@/types/types";
 import {
     BookOpen,
@@ -17,8 +17,6 @@ import {
     ChevronUp,
     Clock,
     CheckCircle,
-    Copy,
-    Check,
     Sparkles,
     Zap,
 } from "lucide-react";
@@ -46,7 +44,6 @@ export default function SubtopicContent({
     const [instructions, setInstructions] = useState("");
     const [selection, setSelection] = useState<{ text: string; x: number; y: number } | null>(null);
 
-    // Selection detection logic
     useEffect(() => {
         const handleSelection = () => {
             const sel = window.getSelection();
@@ -54,25 +51,13 @@ export default function SubtopicContent({
                 const range = sel.getRangeAt(0);
                 const rect = range.getBoundingClientRect();
                 
-                // Only show if the selection is within the prose area (optional but good)
-                // For simplicity, we show it if there's any text selected in the window
-                // since this component dominates the page during study.
-                
                 setSelection({
                     text: sel.toString().trim(),
                     x: rect.left + rect.width / 2,
-                    y: rect.top, // Use viewport coordinates for fixed positioning
+                    y: rect.top,
                 });
             } else {
                 setSelection(null);
-            }
-        };
-
-        const handleDocumentClick = (e: MouseEvent) => {
-            // If clicking outside the selection button, clear selection
-            if (selection && !(e.target as HTMLElement).closest('.ask-ai-btn')) {
-                // We use a small timeout to allow the button click to register first
-                setTimeout(() => setSelection(null), 100);
             }
         };
 
@@ -87,7 +72,6 @@ export default function SubtopicContent({
             const event = new CustomEvent("openChatbotWithQuery", { detail: selection.text });
             window.dispatchEvent(event);
             setSelection(null);
-            // Clear the actual text selection for better UX
             window.getSelection()?.removeAllRanges();
         }
     };
@@ -100,7 +84,6 @@ export default function SubtopicContent({
 
     return (
         <div className="bg-gradient-to-br from-gray-900 via-gray-900 to-black rounded-2xl border border-white/10 overflow-hidden shadow-2xl relative">
-            {/* Regenerate Modal */}
             {showRegenerateModal && (
                 <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
                     <div className="bg-[#0a0a1a] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-2xl">
@@ -135,7 +118,6 @@ export default function SubtopicContent({
                 </div>
             )}
 
-            {/* Header */}
             <div className="p-6 md:p-8 border-b border-white/10 bg-white/5 backdrop-blur-sm">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
@@ -187,7 +169,6 @@ export default function SubtopicContent({
                 </div>
             </div>
 
-            {/* Tabs */}
             <div className="flex border-b border-white/10 bg-black/20">
                 <TabButton
                     active={activeTab === "study"}
@@ -214,7 +195,6 @@ export default function SubtopicContent({
                     )}
             </div>
 
-            {/* Content Area */}
             <div className="p-6 md:p-8 min-h-[500px]">
                 {activeTab === "study" && (
                     <div className="prose prose-invert prose-cyan max-w-none">
@@ -264,7 +244,6 @@ export default function SubtopicContent({
                             {content.content}
                         </ReactMarkdown>
 
-                        {/* Explicit Code Examples Section if distinct from content */}
                         {content.codeExamples?.length > 0 && (
                             <div className="mt-12 pt-8 border-t border-white/10">
                                 <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
@@ -339,7 +318,6 @@ export default function SubtopicContent({
                 )}
             </div>
 
-            {/* Floating Selection Button */}
             {selection && (
                 <div
                     className="fixed z-[100] transform -translate-x-1/2 -translate-y-full mb-3 pointer-events-auto ask-ai-btn"
@@ -356,7 +334,6 @@ export default function SubtopicContent({
                         Ask LearnBot AI
                         <Zap className="w-3 h-3 text-yellow-400" />
                     </button>
-                    {/* Tiny arrow */}
                     <div className="absolute top-[calc(100%-1px)] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-cyan-600" />
                 </div>
             )}

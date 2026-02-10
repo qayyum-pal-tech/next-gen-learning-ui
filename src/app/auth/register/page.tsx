@@ -20,7 +20,6 @@ export default function RegisterPage() {
   const handleRegister = async () => {
     setError('');
 
-    // Validation
     if (!form.email || !form.username || !form.password) {
       setError('All fields are required');
       return;
@@ -66,7 +65,6 @@ export default function RegisterPage() {
   return (
     <div className="w-full max-w-md">
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-8 shadow-2xl">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-3xl font-bold text-transparent">
             Create account ✨
@@ -76,7 +74,6 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        {/* Error Alert */}
         {error && (
           <div className="mb-6 animate-in fade-in slide-in-from-top-1 rounded-lg border border-red-500/20 bg-red-500/10 p-4">
             <div className="flex items-start gap-3">
@@ -96,9 +93,7 @@ export default function RegisterPage() {
           </div>
         )}
 
-        {/* Form */}
-        <div className="space-y-5">
-          {/* Email Field */}
+          <div className="space-y-5">
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-300">
               Email
@@ -118,7 +113,6 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Username Field */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-300">
               Username
@@ -138,7 +132,6 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Password Field */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-300">
               Password
@@ -172,7 +165,6 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          {/* Submit Button */}
           <button
             onClick={handleRegister}
             disabled={loading}
@@ -192,7 +184,6 @@ export default function RegisterPage() {
           </button>
         </div>
 
-        {/* Footer */}
         <p className="mt-6 text-center text-sm text-gray-400">
           Already have an account?{' '}
           <span

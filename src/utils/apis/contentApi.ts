@@ -1,15 +1,7 @@
-/**
- * contentApi.ts
- *
- * Client-side wrapper for specialized subtopic content endpoints.
- */
-
 import { SubtopicContent, GenerateContentDto } from "@/types/types";
 
-/* ─── config ─── */
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-/* ─── shared helpers ─── */
 async function assertOk(res: Response): Promise<void> {
     if (!res.ok) {
         let message = `HTTP ${res.status}`;
@@ -23,10 +15,7 @@ async function assertOk(res: Response): Promise<void> {
     }
 }
 
-/**
- * Check if content exists for a subtopic
- * GET /content/exists/:roadmapId/:topicOrder/:subtopicOrder
- */
+
 export async function contentExists(
     roadmapId: string,
     topicOrder: number,
@@ -42,10 +31,7 @@ export async function contentExists(
     return data.exists;
 }
 
-/**
- * Generate content for a subtopic
- * POST /content/generate
- */
+
 export async function generateContent(
     dto: GenerateContentDto
 ): Promise<SubtopicContent> {
@@ -58,10 +44,7 @@ export async function generateContent(
     return res.json();
 }
 
-/**
- * Get content for a specific subtopic
- * GET /content/:roadmapId/:topicOrder/:subtopicOrder
- */
+
 export async function getContent(
     roadmapId: string,
     topicOrder: number,
@@ -76,10 +59,7 @@ export async function getContent(
     return res.json();
 }
 
-/**
- * Regenerate content (force update)
- * POST /content/regenerate/:roadmapId/:topicOrder/:subtopicOrder
- */
+
 export async function regenerateContent(
     roadmapId: string,
     topicOrder: number,

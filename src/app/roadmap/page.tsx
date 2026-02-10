@@ -16,13 +16,11 @@ export default function DashboardPage() {
 
     const { roadmaps, isLoading } = useRoadmaps(USER_ID);
 
-    /* star animation tick */
     useEffect(() => {
         const id = setInterval(() => setTick((t) => t + 1), 2000);
         return () => clearInterval(id);
     }, []);
 
-    /* ── star field ── */
     const STARS = Array.from({ length: 50 }, (_, i) => ({
         x: (Math.sin(i * 132.5) * 0.5 + 0.5) * 100,
         y: (Math.cos(i * 41.3) * 0.5 + 0.5) * 100,
@@ -32,7 +30,6 @@ export default function DashboardPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 p-4 sm:p-6 lg:p-8 rounded relative overflow-hidden">
-            {/* Background Stars (localized to dashboard area) */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 {STARS.map((star, i) => (
                     <div
@@ -50,7 +47,6 @@ export default function DashboardPage() {
             </div>
 
             <div className="max-w-7xl mx-auto relative z-10 space-y-8">
-                {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
@@ -59,10 +55,8 @@ export default function DashboardPage() {
                         <p className="text-gray-400 mt-4">Expand your knowledge with personalized learning paths</p>
                     </div>
                 </div>
-                {/* Grid Container */}
                 <div className="w-full">
                     {isLoading ? (
-                        // Loading Skeletons in Grid
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                             {[1, 2, 3, 4].map((i) => (
                                 <div
@@ -72,14 +66,12 @@ export default function DashboardPage() {
                             ))}
                         </div>
                     ) : roadmaps.length > 0 ? (
-                        // Roadmap Cards in Grid
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                             {roadmaps.map((roadmap) => (
                                 <RoadmapCard key={roadmap.id} roadmap={roadmap} />
                             ))}
                         </div>
                     ) : (
-                        // Empty State
                         <div className="flex items-center justify-center min-h-[400px]">
                             <div className="group relative w-[300px] h-[400px]">
                                 <div className="absolute inset-0 bg-white/5 rounded-3xl border border-white/10 border-dashed flex flex-col items-center justify-center gap-4 transition-all duration-300 hover:border-cyan-500/30 hover:bg-white/10">

@@ -85,10 +85,8 @@ export default function QuizLanding({
 
   return (
     <div className="h-screen bg-slate-950 text-slate-100 relative overflow-hidden">
-      {/* Dedicated Background Layer for Pulsing Gradient - Fixed Shade Issue */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black animate-pulse-intense opacity-100" />
       
-      {/* Decorative Background Elements */}
       <div className="absolute top-0 right-0 h-[500px] w-[500px] bg-blue-600/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
       <div className="absolute bottom-0 left-0 h-[500px] w-[500px] bg-purple-600/10 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/4 pointer-events-none" />
 
@@ -176,36 +174,6 @@ export default function QuizLanding({
               </div>
             </div>
 
-            {/* <div className="grid grid-cols-3 gap-3 md:gap-4">
-              <div className="bg-slate-900/40 backdrop-blur-md p-3 md:p-4 rounded-xl border border-white/5 shadow-lg group hover:border-blue-500/30 transition-colors">
-                <div className="flex items-center gap-2 mb-1 md:mb-2">
-                  <Clock className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-400" />
-                  <span className="text-[10px] md:text-xs font-medium text-slate-500 uppercase tracking-wider">Time</span>
-                </div>
-                <p className="text-sm md:text-lg font-bold text-white">~5 min</p>
-              </div>
-              
-              <div className="bg-slate-900/40 backdrop-blur-md p-3 md:p-4 rounded-xl border border-white/5 shadow-lg group hover:border-blue-500/30 transition-colors">
-                <div className="flex items-center gap-2 mb-1 md:mb-2">
-                  <Brain className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-400" />
-                  <span className="text-[10px] md:text-xs font-medium text-slate-500 uppercase tracking-wider">Items</span>
-                </div>
-                <p className="text-sm md:text-lg font-bold text-white">
-                  {assessmentType === 'SKILL_CHECK' ? '5-10' : '10-15'}
-                </p>
-              </div>
-              
-              <div className="bg-slate-900/40 backdrop-blur-md p-3 md:p-4 rounded-xl border border-white/5 shadow-lg group hover:border-blue-500/30 transition-colors">
-                <div className="flex items-center gap-2 mb-1 md:mb-2">
-                  <BarChart className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-400" />
-                  <span className="text-[10px] md:text-xs font-medium text-slate-500 uppercase tracking-wider">Format</span>
-                </div>
-                <p className="text-sm md:text-lg font-bold text-white">
-                  {assessmentType === 'SKILL_CHECK' ? 'Focused' : 'Adaptive'}
-                </p>
-              </div>
-            </div> */}
-
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-2 md:pt-4">
               <button
                 onClick={handleGoHome}
@@ -241,7 +209,6 @@ export default function QuizLanding({
 
           <div className="hidden lg:flex lg:w-2/5 items-center justify-center">
             <div className="relative w-full aspect-square max-h-[450px] xl:max-h-[550px] rounded-3xl overflow-hidden group">
-              {/* Layered Background Glows */}
               <div className="absolute inset-0 bg-blue-600/5 blur-[100px] group-hover:blur-[80px] transition-all duration-700" />
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-blue-500/20 rounded-full blur-[80px] pointer-events-none" />
               
@@ -278,7 +245,6 @@ export default function QuizLanding({
                   />
                 </div>
                 
-                {/* Floating Decorative Elements */}
                 <div className="absolute top-8 left-8 w-10 h-10 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 flex items-center justify-center transform group-hover:translate-y-[-5px] transition-transform duration-500 shadow-xl">
                   <div className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-br from-blue-400 to-purple-400">?</div>
                 </div>

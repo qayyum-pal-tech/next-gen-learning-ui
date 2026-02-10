@@ -10,8 +10,8 @@ interface PlanetNodeProps {
     isSelected: boolean;
     isLocked: boolean;
     onClick: () => void;
-    x: number; // percentage (0-100)
-    y: number; // absolute pixels from top
+    x: number; 
+    y: number; 
     memberIcons?: { username: string; userId: string }[];
     hideProgress?: boolean;
 }
@@ -31,7 +31,6 @@ export default function PlanetNode({
     const totalSubtopics = topic.subtopics.length;
     const progress = totalSubtopics > 0 ? (completedSubtopics / totalSubtopics) * 100 : 0;
 
-    // Visual params
     const size = isSelected ? 90 : 80;
     const isTopicCompleted = !hideProgress && topic.isCompleted;
     const glowColor = isTopicCompleted ? "#10b981" : isSelected ? "#a855f7" : "#06b6d4";
@@ -52,7 +51,6 @@ export default function PlanetNode({
                 className={`relative group ${isLocked ? "cursor-not-allowed" : "cursor-pointer"}`}
                 onClick={() => !isLocked && onClick()}
             >
-                {/* Planet Orb */}
                 <motion.div
                     className={`
             relative rounded-full flex items-center justify-center border-2 shadow-[0_0_30px_rgba(0,0,0,0.5)]
@@ -67,7 +65,6 @@ export default function PlanetNode({
                     }}
                     whileHover={{ scale: 1.1 }}
                 >
-                    {/* Inner Content */}
                     {isLocked ? (
                         <Lock className="w-6 h-6 text-gray-500" />
                     ) : isTopicCompleted ? (
@@ -76,7 +73,6 @@ export default function PlanetNode({
                         <span className="text-xl font-bold text-white">{index + 1}</span>
                     )}
 
-                    {/* Team Member Icons */}
                     {memberIcons.length > 0 && (
                         <div className="absolute inset-x-0 -top-6 flex justify-center -space-x-2">
                             {memberIcons.map((member, i) => (
@@ -96,7 +92,6 @@ export default function PlanetNode({
                         </div>
                     )}
 
-                    {/* Progress Ring (SVG) */}
                     {!isLocked && !isTopicCompleted && !hideProgress && (
                         <svg className="absolute inset-0 -rotate-90 w-full h-full p-1">
                             <circle
@@ -110,14 +105,13 @@ export default function PlanetNode({
                                 fill="none"
                                 stroke={glowColor}
                                 strokeWidth="3"
-                                strokeDasharray={`${progress * 2.8} 280`} // approx circ
+                                strokeDasharray={`${progress * 2.8} 280`}
                                 strokeLinecap="round"
                             />
                         </svg>
                     )}
                 </motion.div>
 
-                {/* Label (Always Visible) */}
                 <motion.div
                     className={`
                     absolute top-full mt-3 left-1/2 -translate-x-1/2 w-48 text-center p-2 rounded-lg
